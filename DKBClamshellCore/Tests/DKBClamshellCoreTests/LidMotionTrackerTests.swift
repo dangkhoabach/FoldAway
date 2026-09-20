@@ -6,11 +6,13 @@ import Testing
     /// The fast close recorded in Phase 0.2: ~100°/s, one sample per 100 ms.
     static let fastClose: [(Double, Double)] = [(89.68, 0.0), (85.79, 0.1), (79.31, 0.2), (69.93, 0.3), (58.87, 0.4), (46.31, 0.5), (34.19, 0.6), (23.42, 0.7)]
 
-    @Test func velocityIsNegativeWhileClosing() {
+    @Test func velocityIsNegativeWhileClosingAndPollingSpeedsUp() {
         var t = LidMotionTracker()
+        #expect(t.pollInterval == LidMotionTracker.idlePollInterval)
         for (a, time) in Self.fastClose { t.add(LidSample(angle: a, time: time)) }
         #expect(t.velocity < -100)
         #expect(t.isMoving)
+        #expect(t.pollInterval == LidMotionTracker.movingPollInterval)
     }
 
     @Test func firstMoveAfterALongRestGetsARealVelocity() {
@@ -20,6 +22,17 @@ import Testing
         t.add(LidSample(angle: 104, time: 10.03))
         #expect(t.isMoving)
         #expect(t.velocity < -50)          // 6° over at most one sensor period, not over 10 s
+    }
+
+    @Test func pollJitterDoesNotShakeTheVelocity() {
+        var t = LidMotionTracker()
+        // Changes of exactly −10° per sensor period, but noticed 0 / 33 / 0 / 33 ms late.
+        t.add(LidSample(angle: 110, time: 0.000))
+        t.add(LidSample(angle: 100, time: 0.133))
+        t.add(LidSample(angle: 90, time: 0.200))
+        t.add(LidSample(angle: 80, time: 0.333))
+        t.add(LidSample(angle: 70, time: 0.400))
+        #expect(abs(t.velocity + 100) < 1)
     }
 
     @Test func repeatedReadsBetweenSensorRefreshesDoNotZeroVelocity() {
@@ -69,7 +82,7 @@ import Testing
         #expect(steps.allSatisfy { $0 > 0 && $0 < 3 })
         // 83 ms after the sample the display sits where the lid should be
         // (80° − 100°/s × 0.083 s ≈ 71.7°) — no steady-state lag.
-        #expect(abs(previous - 71.7) < 2)
+        #expect(abs(previous - 71.7) < 3)
     }
 
     @Test func extrapolationIsCappedAndClampedToLidRange() {

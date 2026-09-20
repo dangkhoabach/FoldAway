@@ -20,6 +20,7 @@ final class LidMonitor {
     private var tracker = LidMotionTracker()
     private var reader: HIDLidAngleReader?
     private var pollTimer: DispatchSourceTimer?
+    private var pollInterval: TimeInterval = 0
     private var displayLink: CADisplayLink?
 
     private var overlay: OverlayWindow?
@@ -29,6 +30,7 @@ final class LidMonitor {
     private var frameCount = 0
     private var fpsWindowStart: TimeInterval = 0
     private var fps = 0
+    private var hudUpdatedAt: TimeInterval = 0
 
     /// Settings' Preview slider (plan D17): while set, this angle replaces the
     /// sensor so the whole pipeline — tracker, state machine, capture,
@@ -60,6 +62,7 @@ final class LidMonitor {
         }
         status = .running
         observeSystem()
+        ensureOverlay()          // the Full renderer prepares its capture stream now, while idle
         schedulePoll(after: 0)
         #if DEBUG
         if let i = CommandLine.arguments.firstIndex(of: "--preview-angle"), i + 1 < CommandLine.arguments.count {
@@ -93,33 +96,37 @@ final class LidMonitor {
 
     private func schedulePoll(after interval: TimeInterval) {
         pollTimer?.cancel()
+        let repeating = tracker.pollInterval
         let timer = DispatchSource.makeTimerSource(queue: DispatchQueue(label: "com.dangkhoabach.dkb-clamshell.lid", qos: .userInteractive))
-        timer.schedule(deadline: .now() + interval, repeating: LidMotionTracker.pollInterval)
+        timer.schedule(deadline: .now() + interval, repeating: repeating)
         let reader = self.reader
         // `@Sendable`: without it the closure inherits this method's main-actor
         // isolation and Swift traps when the timer fires on its own queue.
+        // The HID read itself happens here, off the main thread.
         timer.setEventHandler { @Sendable [weak self] in
             let time = CACurrentMediaTime()
+            let result: Result<Double, Error>
+            do { result = .success(try reader?.readAngle() ?? .nan) } catch { result = .failure(error) }
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                let angle: Double
                 if let preview = self.previewAngle {
-                    angle = preview
-                } else {
-                    guard let reader else { return }
-                    do { angle = try reader.readAngle() } catch {
-                        self.status = .sensorError("\(error)"); self.pollTimer?.cancel(); return
-                    }
+                    self.receive(LidSample(angle: preview, time: time)); return
                 }
-                self.receive(LidSample(angle: angle, time: time))
+                switch result {
+                case .success(let angle) where !angle.isNaN: self.receive(LidSample(angle: angle, time: time))
+                case .success: break
+                case .failure(let error): self.status = .sensorError("\(error)"); self.pollTimer?.cancel()
+                }
             }
         }
         timer.resume()
         pollTimer = timer
+        pollInterval = repeating
     }
 
     private func receive(_ sample: LidSample) {
         tracker.add(sample)
+        if tracker.pollInterval != pollInterval { schedulePoll(after: tracker.pollInterval) }
         guard preferences.isEnabled else { return }
         step(at: sample.time)
     }
@@ -167,6 +174,7 @@ final class LidMonitor {
 
     @objc private func displayLinkFired(_ link: CADisplayLink) {
         step(at: CACurrentMediaTime())
+        renderer?.render()
     }
 
     private func startDisplayLink() {
@@ -239,6 +247,8 @@ final class LidMonitor {
         }
         if hud == nil, let screen = BuiltinScreen.screen() { hud = DebugHUDWindow(screen: screen) }
         if time - fpsWindowStart >= 1 { fps = frameCount; frameCount = 0; fpsWindowStart = time }
+        guard time - hudUpdatedAt >= 0.1 else { return }     // text layout 90×/s is not free
+        hudUpdatedAt = time
         let raw = tracker.last?.angle ?? 0
         hud?.show(String(format: "lid %.1f° (raw %.1f°)  v %.0f°/s  rest %.0f°\n%@ · %@ · %d fps%@",
                          angle, raw, tracker.velocity, machine.restAngle ?? 0, "\(machine.phase)", rendererIsFull ? "Full" : "Lite", fps,

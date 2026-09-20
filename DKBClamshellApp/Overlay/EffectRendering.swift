@@ -9,8 +9,12 @@ protocol EffectRendering: AnyObject {
     var view: NSView { get }
     /// `FoldPhase.prewarm`: get ready to draw (Full starts its capture here).
     func prepare()
-    /// Once per frame while the overlay is visible.
+    /// New parameters (cheap; may be called several times per frame).
     func update(_ params: EffectParameters)
+    /// Once per display refresh: do the actual drawing if anything changed.
+    /// Drawing from anywhere else starves `CAMetalLayer`'s three drawables,
+    /// blocks the main thread and presents frames out of order.
+    func render()
     /// `FoldPhase.idle`: release whatever `prepare` acquired.
     func stop()
 }

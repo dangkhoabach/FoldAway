@@ -47,5 +47,7 @@ final class LiteEffectRenderer: EffectRendering {
         CATransaction.commit()
     }
 
+    func render() {}
+
     func stop() {}
 }
