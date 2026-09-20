@@ -13,11 +13,11 @@ enum RendererMode: String, CaseIterable, Identifiable {
 @MainActor
 @Observable
 final class AppPreferences {
-    static let defaultStartAngle = 85
     static let defaultEndAngle = 25
 
     var isEnabled: Bool { didSet { defaults.set(isEnabled, forKey: Keys.isEnabled) } }
-    var startAngle: Int { didSet { defaults.set(startAngle, forKey: Keys.startAngle) } }
+    /// Where the effect is complete. It starts from wherever the lid rested
+    /// (plan D10), so there is no start angle to configure.
     var endAngle: Int { didSet { defaults.set(endAngle, forKey: Keys.endAngle) } }
     var intensity: Double { didSet { defaults.set(intensity, forKey: Keys.intensity) } }
     var maxDarkness: Double { didSet { defaults.set(maxDarkness, forKey: Keys.maxDarkness) } }
@@ -29,7 +29,6 @@ final class AppPreferences {
 
     enum Keys {
         static let isEnabled = "effect.enabled"
-        static let startAngle = "effect.startAngle"
         static let endAngle = "effect.endAngle"
         static let intensity = "effect.intensity"
         static let maxDarkness = "effect.maxDarkness"
@@ -41,15 +40,8 @@ final class AppPreferences {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         isEnabled = defaults.object(forKey: Keys.isEnabled) as? Bool ?? true
-        // A start angle at or below the end angle would make the effect a
-        // step function; fall back to the defaults rather than trust it.
-        let start = defaults.object(forKey: Keys.startAngle) as? Int ?? Self.defaultStartAngle
         let end = defaults.object(forKey: Keys.endAngle) as? Int ?? Self.defaultEndAngle
-        if start > end, (0...180).contains(start), (0...180).contains(end) {
-            startAngle = start; endAngle = end
-        } else {
-            startAngle = Self.defaultStartAngle; endAngle = Self.defaultEndAngle
-        }
+        endAngle = (0...90).contains(end) ? end : Self.defaultEndAngle
         intensity = Self.unit(defaults.object(forKey: Keys.intensity) as? Double) ?? 1
         maxDarkness = Self.unit(defaults.object(forKey: Keys.maxDarkness) as? Double) ?? 1
         revealOnOpen = defaults.object(forKey: Keys.revealOnOpen) as? Bool ?? true

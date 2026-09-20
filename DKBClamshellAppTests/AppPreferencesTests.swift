@@ -14,7 +14,6 @@ import Testing
     @Test func defaultsMatchThePlan() {
         let p = AppPreferences(defaults: freshDefaults())
         #expect(p.isEnabled)
-        #expect(p.startAngle == 85)
         #expect(p.endAngle == 25)
         #expect(p.intensity == 1)
         #expect(p.maxDarkness == 1)
@@ -26,22 +25,19 @@ import Testing
     @Test func changesRoundTripThroughUserDefaults() {
         let d = freshDefaults()
         let p = AppPreferences(defaults: d)
-        p.startAngle = 100; p.endAngle = 30; p.rendererMode = .lite; p.intensity = 0.5; p.isEnabled = false
+        p.endAngle = 30; p.rendererMode = .lite; p.intensity = 0.5; p.isEnabled = false
         let again = AppPreferences(defaults: d)
-        #expect(again.startAngle == 100)
         #expect(again.endAngle == 30)
         #expect(again.rendererMode == .lite)
         #expect(again.intensity == 0.5)
         #expect(!again.isEnabled)
     }
 
-    @Test func invertedOrOutOfRangeAnglesFallBackToDefaults() {
+    @Test func outOfRangeValuesFallBackToDefaults() {
         let d = freshDefaults()
-        d.set(20, forKey: AppPreferences.Keys.startAngle)
-        d.set(80, forKey: AppPreferences.Keys.endAngle)
+        d.set(150, forKey: AppPreferences.Keys.endAngle)
         d.set(7.0, forKey: AppPreferences.Keys.intensity)
         let p = AppPreferences(defaults: d)
-        #expect(p.startAngle == 85)
         #expect(p.endAngle == 25)
         #expect(p.intensity == 1)
     }

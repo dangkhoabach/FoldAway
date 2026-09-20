@@ -1,55 +1,104 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "DKB Clamshell" : {
-      "shouldTranslate" : false
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld°": {
+      "shouldTranslate": false
     },
-    "Effect not wired yet — Phase 3." : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiệu ứng chưa nối — Phase 3."
+    "0°": {
+      "shouldTranslate": false
+    },
+    "180°": {
+      "shouldTranslate": false
+    },
+    "DKB Clamshell": {
+      "shouldTranslate": false
+    },
+    "Drive the effect with this slider instead of the lid": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Điều khiển hiệu ứng bằng thanh trượt thay vì nắp máy"
           }
         }
       }
     },
-    "English" : {
-      "shouldTranslate" : false
-    },
-    "Language" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ngôn ngữ"
+    "Effect not wired yet — Phase 3.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiệu ứng chưa nối — Phase 3."
           }
         }
       }
     },
-    "Quit" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thoát"
+    "English": {
+      "shouldTranslate": false
+    },
+    "Language": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngôn ngữ"
           }
         }
       }
     },
-    "Settings…" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cài đặt…"
+    "Lid angle": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Góc nắp"
           }
         }
       }
     },
-    "Tiếng Việt" : {
-      "shouldTranslate" : false
+    "Preview": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem thử"
+          }
+        }
+      }
+    },
+    "Quit": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thoát"
+          }
+        }
+      }
+    },
+    "Settings…": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cài đặt…"
+          }
+        }
+      }
+    },
+    "Show debug HUD": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiện HUD gỡ lỗi"
+          }
+        }
+      }
+    },
+    "Tiếng Việt": {
+      "shouldTranslate": false
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
