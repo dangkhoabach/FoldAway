@@ -22,5 +22,11 @@
 	<true/>
 	<key>NSScreenCaptureUsageDescription</key>
 	<string>DKB Clamshell reads the built-in display for about a second while the lid closes, to blur and darken it in step with the hinge. Nothing is stored or sent anywhere.</string>
+	<key>SUFeedURL</key>
+	<string>https://updates.dangkhoabach.vn/dkb-clamshell/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>Md2eoEqKHYDOoydO6zU+65MuCebSBkoEKktzexOvwG8=</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
 </dict>
 </plist>

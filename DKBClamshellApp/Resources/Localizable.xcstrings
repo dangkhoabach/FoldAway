@@ -96,6 +96,46 @@
         }
       }
     },
+    "Check Now": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiểm tra ngay"
+          }
+        }
+      }
+    },
+    "Check for Updates…": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiểm tra cập nhật…"
+          }
+        }
+      }
+    },
+    "Check for updates automatically": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tự động kiểm tra cập nhật"
+          }
+        }
+      }
+    },
+    "Checks updates.dangkhoabach.vn once a day. Turning this off means updates only happen when you ask for them.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiểm tra updates.dangkhoabach.vn mỗi ngày một lần. Tắt đi thì chỉ cập nhật khi bạn tự yêu cầu."
+          }
+        }
+      }
+    },
     "DKB Clamshell": {
       "shouldTranslate": false
     },
@@ -394,6 +434,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bật hoặc tắt hiệu ứng"
+          }
+        }
+      }
+    },
+    "Updates": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cập nhật"
           }
         }
       }

@@ -31,6 +31,14 @@ configs:
 packages:
   DKBClamshellCore:
     path: DKBClamshellCore
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    # Pinned exactly, like DKB Monitor / DKB Downloader: this is the update
+    # framework, and an open range would let a routine build move it to an
+    # unreviewed release. The .xcodeproj (and its Package.resolved) is
+    # gitignored, so this line is the only pin there is. Bumping is a
+    # deliberate edit that comes with re-reading Sparkle's release notes.
+    exactVersion: "2.10.0"
 targets:
   DKBClamshellApp:
     type: application
@@ -39,6 +47,7 @@ targets:
       - DKBClamshellApp
     dependencies:
       - package: DKBClamshellCore
+      - package: Sparkle
     info:
       path: DKBClamshellApp/Info.plist
       properties:
@@ -52,6 +61,20 @@ targets:
         # Shown by macOS the first time the Full renderer starts a
         # ScreenCaptureKit stream (plan D5/F5).
         NSScreenCaptureUsageDescription: "DKB Clamshell reads the built-in display for about a second while the lid closes, to blur and darken it in step with the hinge. Nothing is stored or sent anywhere."
+        # Sparkle, same setup as DKB Monitor / DKB Downloader. SUPublicEDKey
+        # is the public half of the EdDSA keypair every release is signed
+        # with; generated once (2026-09-21) under its own Keychain account
+        # so it cannot collide with the other apps' keys:
+        #   .sparkle-tools/<ver>/bin/generate_keys --account dkb-clamshell
+        # Releases are signed and uploaded locally (scripts/release.sh);
+        # admin.dangkhoabach.vn writes the appcast this URL points at.
+        SUFeedURL: https://updates.dangkhoabach.vn/dkb-clamshell/appcast.xml
+        SUPublicEDKey: Md2eoEqKHYDOoydO6zU+65MuCebSBkoEKktzexOvwG8=
+        # Deliberately NOT setting SUEnableAutomaticChecks (same as the other
+        # apps): leaving it out lets Sparkle show its own first-launch
+        # "check automatically?" prompt and store the answer, which
+        # Settings › Updates reads and writes.
+        SUScheduledCheckInterval: 86400
     entitlements:
       path: DKBClamshellApp/DKBClamshellApp.entitlements
       properties:
@@ -59,6 +82,15 @@ targets:
         # and ScreenCaptureKit are simpler outside the sandbox, and the app
         # holds nothing worth isolating. It makes no network calls at all.
         com.apple.security.app-sandbox: false
+        # Hardened Runtime's library validation only loads frameworks signed
+        # by Apple or by the app's own Team ID, and the self-signed local
+        # certificate has none — so the embedded Sparkle.framework, although
+        # signed by the very same certificate, was refused at launch
+        # ("mapping process and mapped file have different Team IDs",
+        # verified 2026-09-21). DKB Monitor / Downloader avoid this by turning
+        # Hardened Runtime off; this app keeps it (D14) and lifts only this
+        # one check. Debug ignores it (no Hardened Runtime there).
+        com.apple.security.cs.disable-library-validation: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dangkhoabach.dkb-clamshell

@@ -11,6 +11,10 @@ struct SettingsView: View {
     @State private var loginItemError: String?
     @State private var previewAngle = 180.0
     @State private var screenRecordingGranted = CGPreflightScreenCaptureAccess()
+    /// Mirrors Sparkle's own preference for display only — the write goes
+    /// straight back to Sparkle, and `onAppear` re-reads it, so this never
+    /// becomes a second source of truth.
+    @State private var automaticUpdateChecks = AppUpdater.automaticallyChecksForUpdates
     private let services = AppServices.shared
 
     var body: some View {
@@ -91,6 +95,22 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
 
+            Section("Updates") {
+                Toggle("Check for updates automatically", isOn: Binding(
+                    get: { automaticUpdateChecks },
+                    set: {
+                        automaticUpdateChecks = $0
+                        AppUpdater.automaticallyChecksForUpdates = $0
+                    }
+                ))
+                Text("Checks updates.dangkhoabach.vn once a day. Turning this off means updates only happen when you ask for them.")
+                    .font(.caption).foregroundStyle(.secondary)
+                HStack {
+                    Spacer()
+                    Button("Check Now") { AppUpdater.checkForUpdates() }
+                }
+            }
+
             Section("Preview") {
                 Toggle("Drive the effect with this slider instead of the lid", isOn: Binding(
                     get: { services.monitor.previewAngle != nil },
@@ -106,6 +126,8 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 520, height: 720)
+        // Sparkle's first-launch prompt can change this after the view was built.
+        .onAppear { automaticUpdateChecks = AppUpdater.automaticallyChecksForUpdates }
         .onChange(of: themeRaw) { _, _ in ThemePreference.apply() }
         .onChange(of: previewAngle) { _, angle in if services.monitor.previewAngle != nil { services.monitor.previewAngle = angle } }
         .onDisappear { services.monitor.previewAngle = nil }

@@ -83,6 +83,7 @@ struct MenuBarContentView: View {
                 openSettings()
                 WindowPresenter.bringSettingsFront()
             }
+            menuButton("Check for Updates…", systemImage: "arrow.triangle.2.circlepath") { AppUpdater.checkForUpdates() }
             menuButton("Quit", systemImage: "power") { NSApp.terminate(nil) }
         }
     }
