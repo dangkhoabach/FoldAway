@@ -1,0 +1,30 @@
+# Logs
+logs
+*.log
+
+# Local signing identity for this machine (CODE_SIGN_IDENTITY) — never commit
+Local.xcconfig
+
+# Local build output — reproducible
+release-output/
+
+# Xcode / Swift Package Manager
+build/
+.build/
+DerivedData/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+*.xcuserstate
+xcuserdata/
+.swiftpm/
+
+# xcodegen-generated projects are reproducible from project.yml — not tracked
+DKBClamshellNative.xcodeproj/
+PoC/ClamshellPoC.xcodeproj/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.swp

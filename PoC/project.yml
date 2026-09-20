@@ -1,0 +1,33 @@
+# Phase 0 PoC only — deleted once results are written into the plan (§1).
+# Swift 5 language mode on purpose: this is throwaway measurement code.
+name: ClamshellPoC
+options:
+  deploymentTarget:
+    macOS: "14.0"
+configFiles:
+  Debug: ../Local.xcconfig
+  Release: ../Local.xcconfig
+settings:
+  MACOSX_DEPLOYMENT_TARGET: "14.0"
+  SWIFT_VERSION: "5.0"
+  CODE_SIGN_STYLE: Manual
+  DEVELOPMENT_TEAM: ""
+  ENABLE_HARDENED_RUNTIME: NO
+targets:
+  ClamshellPoC:
+    type: application
+    platform: macOS
+    sources:
+      - ClamshellPoC
+    info:
+      path: ClamshellPoC/Info.plist
+      properties:
+        CFBundleShortVersionString: "0.0.1"
+        CFBundleVersion: "1"
+        LSUIElement: false
+        NSScreenCaptureUsageDescription: "PoC: measures ScreenCaptureKit start latency and renders the fold effect."
+    settings:
+      # Same bundle id as the real app so the TCC Screen Recording grant carries over (D1/0.4).
+      PRODUCT_BUNDLE_IDENTIFIER: com.dangkhoabach.dkb-clamshell
+      PRODUCT_NAME: "ClamshellPoC"
+      GENERATE_INFOPLIST_FILE: NO
