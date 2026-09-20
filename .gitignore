@@ -28,3 +28,6 @@ PoC/ClamshellPoC.xcodeproj/
 .idea
 .DS_Store
 *.swp
+
+# Coverage data left behind by xcodebuild test
+*.profraw

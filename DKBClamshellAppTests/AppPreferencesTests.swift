@@ -41,4 +41,17 @@ import Testing
         #expect(p.endAngle == 25)
         #expect(p.intensity == 1)
     }
+
+    @Test func resetEffectKeepsEnabledAndHUD() {
+        let p = AppPreferences(defaults: freshDefaults())
+        p.endAngle = 40; p.intensity = 0.2; p.maxDarkness = 0.3; p.rendererMode = .lite
+        p.isEnabled = false; p.showDebugHUD = true
+        p.resetEffect()
+        #expect(p.endAngle == 25)
+        #expect(p.intensity == 1)
+        #expect(p.maxDarkness == 1)
+        #expect(p.rendererMode == .auto)
+        #expect(!p.isEnabled)
+        #expect(p.showDebugHUD)
+    }
 }

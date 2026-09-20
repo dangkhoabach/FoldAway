@@ -16,7 +16,7 @@ struct DKBClamshellApp: App {
             MenuBarContentView()
                 .environment(\.locale, appLocale.locale)
         } label: {
-            Image(systemName: "laptopcomputer")
+            MenuBarIconView()
         }
         .menuBarExtraStyle(.window)
 

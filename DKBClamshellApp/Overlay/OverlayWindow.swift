@@ -19,6 +19,10 @@ final class OverlayWindow: NSPanel {
         hasShadow = false
         isReleasedWhenClosed = false
         animationBehavior = .none
+        // The Lite renderer's NSVisualEffectView tints with the appearance;
+        // pin it so the Settings theme (NSApp.appearance) cannot turn the
+        // fade-to-black into a light haze.
+        appearance = NSAppearance(named: .darkAqua)
         // DKB_ALLOW_CAPTURE lets a Debug build be screenshotted while tuning
         // the effect (same convention as DKB Secret); it does not exist in Release.
         #if DEBUG

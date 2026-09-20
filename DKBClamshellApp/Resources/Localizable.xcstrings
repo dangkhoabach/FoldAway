@@ -1,6 +1,12 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@": {
+      "shouldTranslate": false
+    },
+    "%lld%%": {
+      "shouldTranslate": false
+    },
     "%lld°": {
       "shouldTranslate": false
     },
@@ -10,8 +16,108 @@
     "180°": {
       "shouldTranslate": false
     },
+    "Allow…": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cho phép…"
+          }
+        }
+      }
+    },
+    "Another app already uses this shortcut, so it does nothing here. Choose a different one.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Một app khác đã dùng tổ hợp này nên ở đây không có tác dụng. Hãy chọn tổ hợp khác."
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giao diện"
+          }
+        }
+      }
+    },
+    "Auto": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tự động"
+          }
+        }
+      }
+    },
+    "Back to defaults": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Về mặc định"
+          }
+        }
+      }
+    },
+    "Blur": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Độ mờ"
+          }
+        }
+      }
+    },
+    "Both work from any app, even while the screen is dark: they hide the effect first, then change the setting.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cả hai dùng được ở mọi app, kể cả khi màn hình đang tối: ẩn hiệu ứng trước rồi mới đổi cài đặt."
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Huỷ"
+          }
+        }
+      }
+    },
     "DKB Clamshell": {
       "shouldTranslate": false
+    },
+    "Dark": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tối"
+          }
+        }
+      }
+    },
+    "Darkness": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Độ tối"
+          }
+        }
+      }
     },
     "Drive the effect with this slider instead of the lid": {
       "localizations": {
@@ -23,18 +129,51 @@
         }
       }
     },
-    "Effect not wired yet — Phase 3.": {
+    "EN": {
+      "shouldTranslate": false
+    },
+    "Effect": {
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hiệu ứng chưa nối — Phase 3."
+            "value": "Hiệu ứng"
           }
         }
       }
     },
-    "English": {
+    "Finish closing at": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoàn tất khi gập đến"
+          }
+        }
+      }
+    },
+    "Fold effect": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiệu ứng gập"
+          }
+        }
+      }
+    },
+    "Full": {
       "shouldTranslate": false
+    },
+    "General": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chung"
+          }
+        }
+      }
     },
     "Language": {
       "localizations": {
@@ -46,12 +185,65 @@
         }
       }
     },
+    "Launch at Login": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khởi động cùng máy"
+          }
+        }
+      }
+    },
     "Lid angle": {
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
             "value": "Góc nắp"
+          }
+        }
+      }
+    },
+    "Light": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sáng"
+          }
+        }
+      }
+    },
+    "Lite": {
+      "shouldTranslate": false
+    },
+    "Not supported": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không hỗ trợ"
+          }
+        }
+      }
+    },
+    "Off": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tắt"
+          }
+        }
+      }
+    },
+    "Press keys…": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhấn tổ hợp phím…"
           }
         }
       }
@@ -76,12 +268,72 @@
         }
       }
     },
+    "Ready": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sẵn sàng"
+          }
+        }
+      }
+    },
+    "Renderer": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bộ dựng hình"
+          }
+        }
+      }
+    },
+    "Reset to Defaults": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Về mặc định"
+          }
+        }
+      }
+    },
+    "Screen Recording is allowed: Full folds the actual screen content.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã cho phép Ghi màn hình: chế độ Full gập chính nội dung đang hiển thị."
+          }
+        }
+      }
+    },
+    "Sensor error": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lỗi cảm biến"
+          }
+        }
+      }
+    },
     "Settings…": {
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
             "value": "Cài đặt…"
+          }
+        }
+      }
+    },
+    "Shortcuts": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phím tắt"
           }
         }
       }
@@ -96,8 +348,78 @@
         }
       }
     },
-    "Tiếng Việt": {
+    "Starting…": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang khởi động…"
+          }
+        }
+      }
+    },
+    "System": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hệ thống"
+          }
+        }
+      }
+    },
+    "The effect starts from wherever the lid was resting and is complete at this angle.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiệu ứng bắt đầu từ góc nắp đang mở và hoàn tất ở góc này."
+          }
+        }
+      }
+    },
+    "Theme": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chủ đề"
+          }
+        }
+      }
+    },
+    "Turn the effect on or off": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật hoặc tắt hiệu ứng"
+          }
+        }
+      }
+    },
+    "VI": {
       "shouldTranslate": false
+    },
+    "Waiting for your approval in System Settings › General › Login Items. Until then DKB Clamshell won't start at login.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang chờ bạn cho phép trong System Settings › General › Login Items. Trước đó DKB Clamshell sẽ không khởi động cùng máy."
+          }
+        }
+      }
+    },
+    "Without Screen Recording only Lite (system blur) is available.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa cho phép Ghi màn hình nên chỉ dùng được Lite (làm mờ của hệ thống)."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

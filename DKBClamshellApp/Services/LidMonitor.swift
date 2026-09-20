@@ -6,6 +6,7 @@ import QuartzCore
 /// timer, feeds `LidMotionTracker` and `FoldStateMachine`, and drives the
 /// chosen renderer from a display link while the overlay is visible.
 @MainActor
+@Observable
 final class LidMonitor {
     enum Status: Equatable {
         case notStarted
@@ -23,9 +24,12 @@ final class LidMonitor {
     private var pollInterval: TimeInterval = 0
     private var displayLink: CADisplayLink?
 
+    /// The last angle the sensor (or the Preview slider) produced, for the
+    /// menu bar panel.
+    private(set) var lastAngle: Double?
     private var overlay: OverlayWindow?
     private var renderer: EffectRendering?
-    private var rendererIsFull = false
+    private(set) var rendererIsFull = false
     private var hud: DebugHUDWindow?
     private var frameCount = 0
     private var fpsWindowStart: TimeInterval = 0
@@ -126,9 +130,26 @@ final class LidMonitor {
 
     private func receive(_ sample: LidSample) {
         tracker.add(sample)
+        lastAngle = sample.angle
         if tracker.pollInterval != pollInterval { schedulePoll(after: tracker.pollInterval) }
-        guard preferences.isEnabled else { return }
+        guard preferences.isEnabled else {
+            if machine.phase != .idle { goIdle() }    // switched off mid-close: don't leave the overlay up
+            return
+        }
         step(at: sample.time)
+    }
+
+    /// The global shortcuts and Settings' Preview toggle: hide whatever is
+    /// showing right now and hand control back to the lid.
+    func dismiss() {
+        previewAngle = nil
+        goIdle()
+    }
+
+    private func goIdle() {
+        let before = machine.phase
+        machine.screensDidSleep()
+        if before != .idle { transition(from: before, to: .idle) }
     }
 
     // MARK: Per-frame
@@ -222,12 +243,7 @@ final class LidMonitor {
         let center = NSWorkspace.shared.notificationCenter
         for name in [NSWorkspace.willSleepNotification, NSWorkspace.screensDidSleepNotification] {
             center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-                MainActor.assumeIsolated {
-                    guard let self else { return }
-                    let before = self.machine.phase
-                    self.machine.screensDidSleep()
-                    if before != .idle { self.transition(from: before, to: .idle) }
-                }
+                MainActor.assumeIsolated { self?.goIdle() }
             }
         }
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in

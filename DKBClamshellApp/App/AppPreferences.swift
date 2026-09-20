@@ -49,6 +49,15 @@ final class AppPreferences {
         showDebugHUD = defaults.bool(forKey: Keys.showDebugHUD)
     }
 
+    /// The "back to normal" shortcut and the Settings button: every effect
+    /// value to its default, leaving Enabled, the HUD and the language alone.
+    func resetEffect() {
+        endAngle = Self.defaultEndAngle
+        intensity = 1
+        maxDarkness = 1
+        rendererMode = .auto
+    }
+
     private static func unit(_ value: Double?) -> Double? {
         guard let value, (0...1).contains(value) else { return nil }
         return value
