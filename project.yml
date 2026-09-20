@@ -54,8 +54,8 @@ targets:
         # Source of truth for the version — Info.plist is regenerated from
         # this file on every `xcodegen generate`. scripts/release.sh edits
         # these two lines, not the plist.
-        CFBundleShortVersionString: "0.1.0"
-        CFBundleVersion: "0.1.0"
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1.0.0"
         # Menu bar only (plan D4): no Dock icon, no main window.
         LSUIElement: true
         # Shown by macOS the first time the Full renderer starts a
