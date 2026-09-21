@@ -25,8 +25,6 @@ final class LiteEffectRenderer: EffectRendering {
         let shade = NSView(frame: bounds)
         shade.autoresizingMask = [.width, .height]
         shade.wantsLayer = true
-        gradient.startPoint = CGPoint(x: 0.5, y: 1)   // top of the screen…
-        gradient.endPoint = CGPoint(x: 0.5, y: 0)     // …down to the hinge
         gradient.frame = bounds
         shade.layer = gradient
         view.addSubview(shade)
@@ -41,6 +39,10 @@ final class LiteEffectRenderer: EffectRendering {
         CATransaction.setDisableActions(true)
         let fold = params.farBlurRadius / (EffectParameters.maxBlur * max(0.01, 1))   // 0…1 over the fold
         blur.alphaValue = min(1, fold * 1.5)
+        // Far edge → hinge: top of the screen down, or mirrored.
+        let far: CGFloat = params.direction == .topDown ? 1 : 0
+        gradient.startPoint = CGPoint(x: 0.5, y: far)
+        gradient.endPoint = CGPoint(x: 0.5, y: 1 - far)
         gradient.colors = [NSColor.black.withAlphaComponent(max(params.farDarkness, params.fade)).cgColor,
                            NSColor.black.withAlphaComponent(max(params.hingeDarkness, params.fade)).cgColor]
         gradient.opacity = 1

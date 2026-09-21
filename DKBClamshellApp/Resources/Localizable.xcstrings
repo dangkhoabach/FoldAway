@@ -86,6 +86,16 @@
         }
       }
     },
+    "Bottom up": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Từ dưới lên"
+          }
+        }
+      }
+    },
     "Cancel": {
       "localizations": {
         "vi": {
@@ -155,6 +165,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Độ tối"
+          }
+        }
+      }
+    },
+    "Direction": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng"
           }
         }
       }
@@ -424,6 +444,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chủ đề"
+          }
+        }
+      }
+    },
+    "Top down": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Từ trên xuống"
           }
         }
       }

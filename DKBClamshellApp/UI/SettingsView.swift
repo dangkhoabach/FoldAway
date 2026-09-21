@@ -1,3 +1,4 @@
+import DKBClamshellCore
 import SwiftUI
 
 /// One `Form` with `.formStyle(.grouped)` and a `Section` per topic, like
@@ -63,6 +64,11 @@ struct SettingsView: View {
                     Slider(value: $prefs.maxDarkness, in: 0...1)
                     Text("\(Int(prefs.maxDarkness * 100))%").monospacedDigit().frame(width: 40, alignment: .trailing)
                 }
+                Picker("Direction", selection: $prefs.foldDirection) {
+                    Text("Top down").tag(FoldDirection.topDown)
+                    Text("Bottom up").tag(FoldDirection.bottomUp)
+                }
+                .pickerStyle(.segmented)
                 Text("The effect starts from wherever the lid was resting and is complete at this angle.")
                     .font(.caption).foregroundStyle(.secondary)
                 Button("Reset to Defaults") { prefs.resetEffect() }

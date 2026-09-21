@@ -157,7 +157,8 @@ final class LidMonitor {
         if machine.phase == .active {
             let params = EffectParameters(progress: machine.progress(angle: angle),
                                           delta: (machine.restAngle ?? angle) - angle,
-                                          intensity: preferences.intensity, maxDarkness: preferences.maxDarkness)
+                                          intensity: preferences.intensity, maxDarkness: preferences.maxDarkness,
+                                          direction: preferences.foldDirection)
             renderer?.update(params)
             lastParams = params
             frameCount += 1
@@ -238,7 +239,8 @@ final class LidMonitor {
         let remaining = 1 - t * t * (3 - 2 * t)
         renderer?.update(EffectParameters(progress: reveal.from.progress * remaining,
                                           delta: reveal.from.delta * remaining,
-                                          intensity: preferences.intensity, maxDarkness: preferences.maxDarkness))
+                                          intensity: preferences.intensity, maxDarkness: preferences.maxDarkness,
+                                          direction: preferences.foldDirection))
         overlay?.alphaValue = min(1, (1 - t) / 0.4)
         frameCount += 1
         if t >= 1 {

@@ -1,5 +1,13 @@
 import Foundation
 
+/// Which edge of the screen falls away from the picture. `topDown` is the
+/// real geometry (hinge along the bottom, the top edge stretches and
+/// frosts); `bottomUp` is the same effect mirrored, for people who prefer
+/// the picture to sink from the bottom.
+public enum FoldDirection: String, CaseIterable, Sendable {
+    case topDown, bottomUp
+}
+
 /// What the renderers draw for a given fold (plan §5.3). Blur and darkness are
 /// *graded*: nothing at the hinge, strongest at the far edge, because that is
 /// where the picture has fallen furthest behind the glass. `progress` (0…1
@@ -22,11 +30,14 @@ public struct EffectParameters: Equatable, Sendable {
     public var hingeDarkness: Double
     /// Whole-screen fade to black at the end of the close.
     public var fade: Double
+    public var direction: FoldDirection
 
-    public init(progress: Double, delta: Double, intensity: Double = 1, maxDarkness: Double = 1) {
+    public init(progress: Double, delta: Double, intensity: Double = 1, maxDarkness: Double = 1,
+                direction: FoldDirection = .topDown) {
         let p = max(0, min(1, progress))
         self.progress = p
         self.delta = max(0, delta)
+        self.direction = direction
         let fold = min(1, self.delta / Self.saturationDelta)
         // Ease in: the first degrees are about the picture staying put, the
         // frost and shade arrive as the gap opens up.

@@ -52,8 +52,6 @@ final class FullEffectRenderer: EffectRendering {
         shadeView.frame = NSRect(origin: .zero, size: size)
         shadeView.autoresizingMask = [.width, .height]
         shadeView.wantsLayer = true
-        shade.startPoint = CGPoint(x: 0.5, y: 1)   // far edge…
-        shade.endPoint = CGPoint(x: 0.5, y: 0)     // …down to the hinge
         shade.frame = shadeView.bounds
         shadeView.layer = shade
         container.frame = NSRect(origin: .zero, size: size)
@@ -76,6 +74,9 @@ final class FullEffectRenderer: EffectRendering {
     private func applyShade(_ p: EffectParameters) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
+        let far: CGFloat = p.direction == .topDown ? 1 : 0   // far edge → hinge
+        shade.startPoint = CGPoint(x: 0.5, y: far)
+        shade.endPoint = CGPoint(x: 0.5, y: 1 - far)
         shade.colors = [NSColor.black.withAlphaComponent(max(p.farDarkness, p.fade)).cgColor,
                         NSColor.black.withAlphaComponent(max(p.hingeDarkness, p.fade)).cgColor]
         CATransaction.commit()
@@ -132,8 +133,12 @@ final class FullEffectRenderer: EffectRendering {
         let bounds = CGRect(origin: .zero, size: size)
         let p = params
 
-        // Core Image's origin is bottom-left, which is the hinge edge.
+        // Core Image's origin is bottom-left, which is the hinge edge. The
+        // pipeline below always folds the top edge away; `bottomUp` is the
+        // same pipeline on a vertically flipped picture, flipped back at the end.
+        let flip = CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: h)
         var picture = CIImage(cvPixelBuffer: frame)
+        if p.direction == .bottomUp { picture = picture.transformed(by: flip) }
 
         // 1. Re-project: the picture stays put, the panel folds under it.
         let projection = FoldProjection(width: w, height: h, delta: p.delta)
@@ -176,6 +181,7 @@ final class FullEffectRenderer: EffectRendering {
         if p.fade > 0 {
             image = CIImage(color: CIColor(red: 0, green: 0, blue: 0, alpha: p.fade)).cropped(to: bounds).composited(over: image)
         }
+        if p.direction == .bottomUp { image = image.transformed(by: flip) }
 
         context.render(image, to: drawable.texture, commandBuffer: commands, bounds: bounds, colorSpace: CGColorSpaceCreateDeviceRGB())
         commands.present(drawable)

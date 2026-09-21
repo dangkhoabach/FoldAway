@@ -1,3 +1,4 @@
+import DKBClamshellCore
 import Foundation
 import Observation
 
@@ -21,6 +22,7 @@ final class AppPreferences {
     var endAngle: Int { didSet { defaults.set(endAngle, forKey: Keys.endAngle) } }
     var intensity: Double { didSet { defaults.set(intensity, forKey: Keys.intensity) } }
     var maxDarkness: Double { didSet { defaults.set(maxDarkness, forKey: Keys.maxDarkness) } }
+    var foldDirection: FoldDirection { didSet { defaults.set(foldDirection.rawValue, forKey: Keys.foldDirection) } }
     var revealOnOpen: Bool { didSet { defaults.set(revealOnOpen, forKey: Keys.revealOnOpen) } }
     var rendererMode: RendererMode { didSet { defaults.set(rendererMode.rawValue, forKey: Keys.rendererMode) } }
     var showDebugHUD: Bool { didSet { defaults.set(showDebugHUD, forKey: Keys.showDebugHUD) } }
@@ -32,6 +34,7 @@ final class AppPreferences {
         static let endAngle = "effect.endAngle"
         static let intensity = "effect.intensity"
         static let maxDarkness = "effect.maxDarkness"
+        static let foldDirection = "effect.foldDirection"
         static let revealOnOpen = "effect.revealOnOpen"
         static let rendererMode = "renderer.mode"
         static let showDebugHUD = "debug.hud"
@@ -44,6 +47,7 @@ final class AppPreferences {
         endAngle = (0...90).contains(end) ? end : Self.defaultEndAngle
         intensity = Self.unit(defaults.object(forKey: Keys.intensity) as? Double) ?? 1
         maxDarkness = Self.unit(defaults.object(forKey: Keys.maxDarkness) as? Double) ?? 1
+        foldDirection = defaults.string(forKey: Keys.foldDirection).flatMap(FoldDirection.init(rawValue:)) ?? .topDown
         revealOnOpen = defaults.object(forKey: Keys.revealOnOpen) as? Bool ?? true
         rendererMode = defaults.string(forKey: Keys.rendererMode).flatMap(RendererMode.init(rawValue:)) ?? .auto
         showDebugHUD = defaults.bool(forKey: Keys.showDebugHUD)
@@ -55,6 +59,7 @@ final class AppPreferences {
         endAngle = Self.defaultEndAngle
         intensity = 1
         maxDarkness = 1
+        foldDirection = .topDown
         rendererMode = .auto
     }
 
