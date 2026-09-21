@@ -10,19 +10,21 @@ release-output/
 # Sparkle CLI tools downloaded by scripts/release.sh
 .sparkle-tools/
 
-# Xcode / Swift Package Manager
+# Xcode / Swift Package Manager. Tracked inside the .xcodeproj: project.pbxproj,
+# the shared scheme (serial build order, see docs/release.md) and the
+# workspace's Package.resolved (Sparkle pin).
 build/
 .build/
 DerivedData/
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+*.xcodeproj/project.xcworkspace/*
+!*.xcodeproj/project.xcworkspace/xcshareddata/
 *.xcuserstate
 xcuserdata/
 .swiftpm/
-
-# xcodegen-generated projects are reproducible from project.yml — not tracked
-DKBClamshellNative.xcodeproj/
-PoC/ClamshellPoC.xcodeproj/
 
 # Editor directories and files
 .vscode/*

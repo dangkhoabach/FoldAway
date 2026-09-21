@@ -16,7 +16,7 @@ cd "$(dirname "$0")/.."
 SCHEME="DKBClamshellApp"
 PROJECT="DKBClamshellNative.xcodeproj"
 APP_NAME="DKB Clamshell"
-PROJECT_YML="project.yml"
+INFO_PLIST="DKBClamshellApp/Info.plist"
 # The Keychain account generate_keys created this app's EdDSA key under.
 # Required: without --account, sign_update silently signs with DKB Monitor's
 # default-account key, producing a signature no installed copy accepts.
@@ -32,20 +32,16 @@ IDENTITY=$(sed -nE 's/^CODE_SIGN_IDENTITY *= *(.*)$/\1/p' Local.xcconfig)
 [ "$IDENTITY" != "-" ] || { echo "Error: Local.xcconfig is ad-hoc. A release must use the local certificate (scripts/create-signing-cert.sh)." >&2; exit 1; }
 command -v create-dmg >/dev/null || { echo "Error: create-dmg not found. Run: brew install create-dmg" >&2; exit 1; }
 
-# The .xcodeproj is gitignored, so it must exist before the app tests run.
-echo "==> Regenerating Xcode project"
-xcodegen generate
-
 echo "==> Testing DKBClamshellCore"
 (cd DKBClamshellCore && swift test)
 
 echo "==> Testing DKBClamshellApp"
 xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -destination "platform=macOS" -quiet
 
-# project.yml is the source of truth — xcodegen regenerates Info.plist from
-# it on every `generate`. Both version fields get the same MAJOR.MINOR.PATCH,
-# which is what admin.dangkhoabach.vn writes into the appcast.
-CURRENT_VERSION=$(grep -m1 'CFBundleShortVersionString:' "$PROJECT_YML" | sed -E 's/.*CFBundleShortVersionString: *"?([^"]*)"?/\1/')
+# Info.plist is the source of truth for the version. Both fields get the
+# same MAJOR.MINOR.PATCH, which is what admin.dangkhoabach.vn writes into
+# the appcast.
+CURRENT_VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")
 SUGGESTED_VERSION=$(awk -F. '{print $1"."$2"."$3+1}' <<< "$CURRENT_VERSION")
 read -rp "Current version is $CURRENT_VERSION. New version (e.g. $SUGGESTED_VERSION) [Enter to keep]: " INPUT
 VERSION="${INPUT:-$CURRENT_VERSION}"
@@ -59,10 +55,10 @@ if [ "$VERSION" != "$CURRENT_VERSION" ] &&
   exit 1
 fi
 
-# project.yml is edited in place before the build, so any failure from here
+# Info.plist is edited in place before the build, so any failure from here
 # on would otherwise leave it bumped to a version that never shipped.
-PROJECT_YML_BACKUP=$(mktemp)
-cp "$PROJECT_YML" "$PROJECT_YML_BACKUP"
+INFO_PLIST_BACKUP=$(mktemp)
+cp "$INFO_PLIST" "$INFO_PLIST_BACKUP"
 
 # One handler, installed once: `$?` inside a trap is whatever ran last, so
 # chaining two traps would have the second read the first's exit code.
@@ -72,17 +68,15 @@ on_exit() {
     rm -rf "$BUILD_DIR"
   fi
   if [ "$status" -ne 0 ]; then
-    echo "==> Failed (exit $status) — restoring $PROJECT_YML" >&2
-    cp "$PROJECT_YML_BACKUP" "$PROJECT_YML"
+    echo "==> Failed (exit $status) — restoring $INFO_PLIST" >&2
+    cp "$INFO_PLIST_BACKUP" "$INFO_PLIST"
   fi
-  rm -f "$PROJECT_YML_BACKUP"
+  rm -f "$INFO_PLIST_BACKUP"
 }
 trap on_exit EXIT
 
-sed -i '' -E "s/(CFBundleShortVersionString: )\"?[^\"[:space:]]*\"?/\1\"$VERSION\"/" "$PROJECT_YML"
-sed -i '' -E "s/(CFBundleVersion: )\"?[^\"[:space:]]*\"?/\1\"$VERSION\"/" "$PROJECT_YML"
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" -c "Set :CFBundleVersion $VERSION" "$INFO_PLIST"
 echo "==> Releasing version $VERSION"
-xcodegen generate
 
 OUT_DIR="release-output/$VERSION"
 mkdir -p "$OUT_DIR"

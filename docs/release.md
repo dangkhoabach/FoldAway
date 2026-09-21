@@ -24,7 +24,7 @@ Settings › Privacy & Security › **Open Anyway**.
 2. **Sparkle EdDSA keypair** — already generated (2026-09-21) under the
    `dkb-clamshell` Keychain account, kept separate from DKB Monitor's
    (default `ed25519` account) and DKB Downloader's (`dkb-downloader`);
-   `SUPublicEDKey` in `project.yml` is its public half. Only if it ever has
+   `SUPublicEDKey` in `DKBClamshellApp/Info.plist` is its public half. Only if it ever has
    to be regenerated:
    ```bash
    .sparkle-tools/2.6.4/bin/generate_keys --account dkb-clamshell
@@ -34,7 +34,7 @@ Settings › Privacy & Security › **Open Anyway**.
 3. **`create-dmg`** — `brew install create-dmg` (styles the installer's
    Finder window with an Applications drop link).
 
-`project.yml` deliberately does not set `SUEnableAutomaticChecks` (same as
+`Info.plist` deliberately does not set `SUEnableAutomaticChecks` (same as
 the other apps): Sparkle shows its own "check automatically?" prompt on the
 second launch and stores the answer, which Settings › Updates reads and
 writes. `AppDelegate` touches `AppUpdater.shared` at launch so the daily
@@ -49,7 +49,7 @@ self-signed certificate has no Team ID — so the embedded
 refused at launch ("mapping process and mapped file have different Team
 IDs"). DKB Monitor / Downloader turn Hardened Runtime off for this reason;
 this app instead adds the `com.apple.security.cs.disable-library-validation`
-entitlement (`project.yml`), which lifts only that one check. `release.sh`
+entitlement (`DKBClamshellApp/DKBClamshellApp.entitlements`), which lifts only that one check. `release.sh`
 verifies the runtime flag and that exactly these two entitlements are
 present (sandbox off, library validation off) and no `get-task-allow`.
 
@@ -60,8 +60,8 @@ present (sandbox off, library validation off) and no `get-task-allow`.
 ```
 
 Prompts for the version (Enter keeps the current one), writes it into both
-`CFBundleShortVersionString` and `CFBundleVersion` in `project.yml` (the
-source of truth — `Info.plist` is regenerated from it), then runs:
+`CFBundleShortVersionString` and `CFBundleVersion` in
+`DKBClamshellApp/Info.plist`, then runs:
 `swift test` (Core) → app tests → Release build with the local certificate
 (universal arm64 + x86_64, temporary DerivedData) → verify signature,
 Hardened Runtime, entitlements, architectures → DMG → Sparkle-sign under the
@@ -71,14 +71,45 @@ and the `.app` for `scripts/install-local.sh`.
 
 The version must be `MAJOR.MINOR.PATCH` and not lower than the current one
 (Sparkle would never offer a lower one). If anything fails after the
-version was written, `project.yml` is restored.
+version was written, `Info.plist` is restored.
 
-The scheme builds its targets one after another (`parallelizeBuild: false`
-in `project.yml`): with parallel builds the app's CodeSign raced the test
+The shared scheme (`DKBClamshellNative.xcodeproj/xcshareddata/xcschemes/
+DKBClamshellApp.xcscheme`, committed) builds its targets one after another
+(`parallelizeBuildables = "NO"`; `DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING`
+on the app target keeps Xcode's "manual order is deprecated" warning to a
+verbose-only note): with parallel builds the app's CodeSign raced the test
 target copying its not-yet-signed `.xctest` into the app, and the app test
 step failed with "code object is not signed at all. In subcomponent:
 …DKBClamshellAppTests.xctest" — twice in a row, then not. If that message
 ever comes back, that race is the first suspect.
+
+## Build settings worth knowing
+
+Set on the project/target in `DKBClamshellNative.xcodeproj` (open it in Xcode to change):
+
+- `Local.xcconfig` is the base configuration of both build configurations and carries only
+  `CODE_SIGN_IDENTITY`. Plan §3.2 D1: the Screen Recording grant (TCC) is keyed on the
+  signing identity — ad-hoc would re-prompt after every rebuild; the self-signed certificate
+  keeps it (verified in Phase 0.4). The build fails until the file exists, on purpose.
+- `CODE_SIGN_STYLE = Manual`, no team: built and installed on this Mac only, no Apple
+  Developer Program, nothing that can expire.
+- `ENABLE_HARDENED_RUNTIME` is `YES` for Release only (plan D14): Xcode 16+ Debug builds link
+  the app through a generated `<App>.debug.dylib`, and Hardened Runtime's library validation
+  rejects that dylib under a non-Apple identity — confirmed in DKB-Secret.
+- `CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO` for Release: Xcode otherwise injects
+  `get-task-allow` (debugger attach) into every Manual-signed build.
+- **Sparkle is pinned to an exact version** (`2.10.0`) in the package reference, like DKB
+  Monitor / Downloader: an open range would let a routine build move the update framework to
+  an unreviewed release. The workspace's `Package.resolved` is committed too. Bumping is a
+  deliberate edit that comes with re-reading Sparkle's release notes.
+- `SWIFT_EMIT_LOC_STRINGS = YES`: the compiler must emit the exact runtime keys for
+  interpolated SwiftUI strings, or hand-written catalog entries never match at runtime.
+- Not sandboxed (plan D14): IOKit HID access to the lid angle sensor and ScreenCaptureKit are
+  simpler outside the sandbox, and the app holds nothing worth isolating; it makes no network
+  calls of its own.
+- `Info.plist`: `LSUIElement = true` (menu bar only, plan D4) and
+  `NSScreenCaptureUsageDescription` (shown the first time the Full renderer starts a
+  ScreenCaptureKit stream, plan D5/F5).
 
 ## Uploading a release
 
@@ -93,7 +124,7 @@ and upload:
 
 Leave the Tauri-format "Updater bundle"/"Signature" fields empty. The admin
 panel writes `updates.dangkhoabach.vn/dkb-clamshell/appcast.xml`, which
-`SUFeedURL` in `project.yml` points at. Compare the SHA-256 the script
+`SUFeedURL` in `Info.plist` points at. Compare the SHA-256 the script
 printed with the uploaded file — the DMG and the signature are two separate
 fields and a mismatch makes every client reject the update with an error
 that points nowhere near the cause.

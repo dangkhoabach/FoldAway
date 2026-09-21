@@ -39,11 +39,13 @@ is in [`docs/dkb-clamshell-build-plan.md`](docs/dkb-clamshell-build-plan.md).
 
 ```bash
 ./scripts/create-signing-cert.sh   # once: self-signed identity → Local.xcconfig
-xcodegen generate
 open DKBClamshellNative.xcodeproj
 ```
 
-Swift 6 / SwiftUI / AppKit, XcodeGen. The only dependency is
+Swift 6 / SwiftUI / AppKit; the `.xcodeproj` is committed (`project.pbxproj`,
+the shared scheme and `Package.resolved`) and `Local.xcconfig` — gitignored,
+just `CODE_SIGN_IDENTITY` — is its base configuration, so the build fails
+until that file exists. The only dependency is
 [Sparkle](https://sparkle-project.org/) for updates: the app checks
 `updates.dangkhoabach.vn` once a day if you allow it (Sparkle asks on the
 second launch; Settings › Updates changes the answer) and the menu bar has
