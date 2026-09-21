@@ -30,18 +30,49 @@ import Testing
         m.update(angle: 60, velocity: -100, isMoving: true, time: 0.5);  #expect(m.phase == .active)
         m.update(angle: 112, velocity: 100, isMoving: true, time: 1.5);  #expect(m.phase == .active)
         m.update(angle: 112, velocity: 0, isMoving: false, time: 2.0);   #expect(m.phase == .active)
-        m.update(angle: 112, velocity: 0, isMoving: false, time: 3.9);   #expect(m.phase == .active)
-        m.update(angle: 112, velocity: 0, isMoving: false, time: 4.0);   #expect(m.phase == .idle)
+        m.update(angle: 112, velocity: 0, isMoving: false, time: 2.9);   #expect(m.phase == .active)
+        m.update(angle: 112, velocity: 0, isMoving: false, time: 3.0);   #expect(m.phase == .idle)
         #expect(m.restAngle == 112)                    // the new resting angle
         #expect(m.progress(angle: 112) == 0)
     }
 
-    @Test func aHalfClosedLidStaysActive() {
+    @Test func aLidParkedHalfWayGivesTheScreenBackAndRestsThere() {
         var m = resting(at: 110)
-        m.update(angle: 60, velocity: -100, isMoving: true, time: 0.5)
-        m.update(angle: 60, velocity: 0, isMoving: false, time: 5)
-        #expect(m.phase == .active)
+        m.update(angle: 60, velocity: -100, isMoving: true, time: 0.5);  #expect(m.phase == .active)
+        m.update(angle: 60, velocity: 0, isMoving: false, time: 1.0);    #expect(m.phase == .active)
         #expect(m.progress(angle: 60) > 0.5)
+        m.update(angle: 60, velocity: 0, isMoving: false, time: 1.9);    #expect(m.phase == .active)
+        m.update(angle: 60, velocity: 0, isMoving: false, time: 2.0);    #expect(m.phase == .idle)
+        #expect(m.restAngle == 60)
+        #expect(m.progress(angle: 60) == 0)
+        // Closing on from there counts from the new rest.
+        #expect(m.startAngle == 57)
+        m.update(angle: 50, velocity: -80, isMoving: true, time: 2.5);   #expect(m.phase == .active)
+    }
+
+    @Test func aHesitationMidCloseDoesNotRelease() {
+        var m = resting(at: 110)
+        m.update(angle: 70, velocity: -100, isMoving: true, time: 0.5);  #expect(m.phase == .active)
+        m.update(angle: 70, velocity: 0, isMoving: false, time: 1.0)
+        m.update(angle: 70, velocity: 0, isMoving: false, time: 1.8);    #expect(m.phase == .active)
+        m.update(angle: 55, velocity: -100, isMoving: true, time: 1.9);  #expect(m.phase == .active)
+        m.update(angle: 55, velocity: 0, isMoving: false, time: 2.5)
+        m.update(angle: 55, velocity: 0, isMoving: false, time: 3.4);    #expect(m.phase == .active) // the clock restarted at 2.5
+        m.update(angle: 55, velocity: 0, isMoving: false, time: 3.5);    #expect(m.phase == .idle)
+    }
+
+    @Test func aClosedLidStaysFoldedUntilTheScreensSleep() {
+        var m = resting(at: 110)
+        m.update(angle: 10, velocity: -100, isMoving: true, time: 0.5);  #expect(m.phase == .active)
+        m.update(angle: 10, velocity: 0, isMoving: false, time: 1.0)
+        m.update(angle: 10, velocity: 0, isMoving: false, time: 6.0);    #expect(m.phase == .active)
+        #expect(m.progress(angle: 10) == 1)
+        // Reopened before the Mac slept: the sensor unfolds it, then it rests.
+        m.update(angle: 80, velocity: 100, isMoving: true, time: 6.5);   #expect(m.phase == .active)
+        #expect(m.progress(angle: 80) > 0)
+        m.update(angle: 80, velocity: 0, isMoving: false, time: 7.0)
+        m.update(angle: 80, velocity: 0, isMoving: false, time: 8.0);    #expect(m.phase == .idle)
+        #expect(m.restAngle == 80)
     }
 
     @Test func openingDoesNotPrewarm() {

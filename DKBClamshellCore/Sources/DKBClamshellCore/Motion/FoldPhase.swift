@@ -7,8 +7,14 @@ import Foundation
 /// transition begins the moment the hinge moves, not at a fixed angle):
 ///
 ///     idle ──(closing)──▶ prewarm ──(angle < rest − startOffset)──▶ active
-///     active / prewarm ──(back above start and still for releaseDelay, or screens slept)──▶ idle
+///     active / prewarm ──(still for releaseDelay above endAngle, or screens slept)──▶ idle
 ///     unlock: angle < start ──▶ active · otherwise ──▶ reveal ──(revealFinished)──▶ idle
+///
+/// Wherever the lid stops — back where it was, or half-way down — it becomes
+/// the new resting angle and the screen is handed back: a lid held at 70° is
+/// a lid someone wants to use. Below `endAngle` the screen is already black
+/// and the lid is as good as closed, so the effect stays put until the
+/// screens sleep (or the lid comes back up and unfolds it).
 public enum FoldPhase: Equatable, Sendable {
     case idle
     /// Full renderer starts its capture stream here so the first frame is
@@ -23,13 +29,17 @@ public struct FoldStateMachine: Sendable {
     /// How far below the resting angle the effect begins — enough to ignore
     /// a nudge, small enough to feel immediate.
     public static let startOffset = 3.0
-    public static let releaseDelay = 2.0      // s back above `startAngle` before going idle
+    /// How long the lid has to be still before the effect lets go. Long
+    /// enough to ride out a hesitation mid-close, short enough that a lid
+    /// parked half-way gives the screen back promptly (plus the tracker's
+    /// 0.25 s to notice the lid stopped).
+    public static let releaseDelay = 1.0
 
     public var endAngle: Double
     public private(set) var phase: FoldPhase = .idle
     /// Where the lid sat before it started closing; tracked while idle.
     public private(set) var restAngle: Double?
-    private var aboveStartSince: TimeInterval?
+    private var stillSince: TimeInterval?
 
     public init(endAngle: Double) {
         self.endAngle = endAngle
@@ -50,10 +60,10 @@ public struct FoldStateMachine: Sendable {
     /// Feed the displayed angle (from `LidMotionTracker`) every frame.
     public mutating func update(angle: Double, velocity: Double, isMoving: Bool, time: TimeInterval) {
         if phase == .idle, !isMoving { restAngle = angle }
-        if angle >= startAngle, !isMoving {
-            if aboveStartSince == nil { aboveStartSince = time }
-        } else {
-            aboveStartSince = nil
+        if isMoving {
+            stillSince = nil
+        } else if stillSince == nil {
+            stillSince = time
         }
         switch phase {
         case .idle:
@@ -62,29 +72,29 @@ public struct FoldStateMachine: Sendable {
             else if isMoving, velocity < 0 { phase = .prewarm }
         case .prewarm:
             if angle < startAngle { phase = .active }
-            else if released(at: time) { phase = .idle; restAngle = angle }
+            else if released(at: time, angle: angle) { phase = .idle; restAngle = angle }
         case .active:
-            if released(at: time) { phase = .idle; restAngle = angle }
+            if released(at: time, angle: angle) { phase = .idle; restAngle = angle }
         case .reveal:
             break
         }
     }
 
-    private func released(at time: TimeInterval) -> Bool {
-        guard let since = aboveStartSince else { return false }
+    private func released(at time: TimeInterval, angle: Double) -> Bool {
+        guard angle > endAngle, let since = stillSince else { return false }
         return time - since >= Self.releaseDelay
     }
 
     /// `screensDidSleepNotification` / `willSleepNotification`: nothing to draw.
     public mutating func screensDidSleep() {
         phase = .idle
-        aboveStartSince = nil
+        stillSince = nil
     }
 
     /// `com.apple.screenIsUnlocked` (D11).
     public mutating func screenUnlocked(angle: Double) {
         phase = angle < startAngle ? .active : .reveal
-        aboveStartSince = nil
+        stillSince = nil
     }
 
     public mutating func revealFinished() {

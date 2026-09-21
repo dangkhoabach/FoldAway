@@ -3,8 +3,9 @@
 A menu-bar app for MacBooks that gives the built-in display an iPhone Duo-style
 fold transition: as you lower the lid, the screen blurs, tilts toward the hinge
 and fades to black in step with the hinge angle — driven by the lid angle
-sensor, not a timer. After you open the lid and unlock, the content reveals
-itself again.
+sensor, not a timer. Stop the lid anywhere and the screen comes back after a
+second, ready to use at that angle. After you open the lid and unlock, the
+content reveals itself again.
 
 The full design — measurements, decisions and the phase-by-phase checklist —
 is in [`docs/dkb-clamshell-build-plan.md`](docs/dkb-clamshell-build-plan.md).
