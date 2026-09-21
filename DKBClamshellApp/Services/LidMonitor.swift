@@ -23,6 +23,13 @@ final class LidMonitor {
     private var pollTimer: DispatchSourceTimer?
     private var pollInterval: TimeInterval = 0
     private var displayLink: CADisplayLink?
+    /// How long the un-fold takes when the lid settles part-way (plan D11's
+    /// reveal, run from wherever the effect was instead of from 1).
+    private static let revealDuration = 0.35
+    /// The last parameters the renderer was given while active — where the
+    /// un-fold starts from.
+    private var lastParams: EffectParameters?
+    private var reveal: (from: EffectParameters, start: TimeInterval)?
 
     /// The last angle the sensor (or the Preview slider) produced, for the
     /// menu bar panel.
@@ -139,6 +146,25 @@ final class LidMonitor {
         step(at: sample.time)
     }
 
+    /// Feed the state machine and, while active, the renderer. Called from
+    /// every poll and from the display link.
+    private func step(at time: TimeInterval) {
+        guard let angle = tracker.displayAngle(at: time) else { return }
+        machine.endAngle = Double(preferences.endAngle)
+        let before = machine.phase
+        machine.update(angle: angle, velocity: tracker.velocity, isMoving: tracker.isMoving, time: time)
+        if machine.phase != before { transition(from: before, to: machine.phase, settled: true) }
+        if machine.phase == .active {
+            let params = EffectParameters(progress: machine.progress(angle: angle),
+                                          delta: (machine.restAngle ?? angle) - angle,
+                                          intensity: preferences.intensity, maxDarkness: preferences.maxDarkness)
+            renderer?.update(params)
+            lastParams = params
+            frameCount += 1
+        }
+        updateHUD(angle: angle, time: time)
+    }
+
     /// The global shortcuts and Settings' Preview toggle: hide whatever is
     /// showing right now and hand control back to the lid.
     func dismiss() {
@@ -149,28 +175,15 @@ final class LidMonitor {
     private func goIdle() {
         let before = machine.phase
         machine.screensDidSleep()
-        if before != .idle { transition(from: before, to: .idle) }
+        if before != .idle { transition(from: before, to: .idle, settled: false) }
     }
 
-    // MARK: Per-frame
+    // MARK: Transitions
 
-    private func step(at time: TimeInterval) {
-        guard let angle = tracker.displayAngle(at: time) else { return }
-        machine.endAngle = Double(preferences.endAngle)
-        let before = machine.phase
-        machine.update(angle: angle, velocity: tracker.velocity, isMoving: tracker.isMoving, time: time)
-        if machine.phase != before { transition(from: before, to: machine.phase) }
-        if machine.phase == .active {
-            let params = EffectParameters(progress: machine.progress(angle: angle),
-                                          delta: (machine.restAngle ?? angle) - angle,
-                                          intensity: preferences.intensity, maxDarkness: preferences.maxDarkness)
-            renderer?.update(params)
-            frameCount += 1
-        }
-        updateHUD(angle: angle, time: time)
-    }
-
-    private func transition(from: FoldPhase, to: FoldPhase) {
+    /// `settled`: the state machine moved on its own (the lid settled), as
+    /// opposed to sleep, a shortcut or the effect being switched off — those
+    /// hide the overlay at once, a settled lid gets the un-fold.
+    private func transition(from: FoldPhase, to: FoldPhase, settled: Bool) {
         #if DEBUG
         NSLog("phase %@ → %@ (rest %.1f°, start %.1f°)", "\(from)", "\(to)", machine.restAngle ?? -1, machine.startAngle)
         #endif
@@ -181,21 +194,59 @@ final class LidMonitor {
         case .active:
             ensureOverlay()
             if from == .idle { renderer?.prepare() }
+            reveal = nil                       // the lid moved on mid un-fold: pick up from here
+            overlay?.alphaValue = 1
             overlay?.orderFrontRegardless()
             frameCount = 0
             startDisplayLink()
         case .idle:
-            stopDisplayLink()
-            overlay?.orderOut(nil)
-            renderer?.stop()
+            if settled, from == .active, let params = lastParams {
+                reveal = (from: params, start: CACurrentMediaTime())
+                #if DEBUG
+                NSLog("un-fold from progress %.2f δ=%.1f (frame %d)", params.progress, params.delta, frameCount)
+                #endif
+            } else if !settled || reveal == nil {   // prewarm settling mid un-fold lets it finish
+                hide()
+            }
         case .reveal:
             break   // Phase 4
         }
     }
 
+    private func hide() {
+        reveal = nil
+        stopDisplayLink()
+        overlay?.orderOut(nil)
+        overlay?.alphaValue = 1
+        renderer?.stop()
+    }
+
     @objc private func displayLinkFired(_ link: CADisplayLink) {
-        step(at: CACurrentMediaTime())
+        let time = CACurrentMediaTime()
+        step(at: time)
+        if let reveal { advanceReveal(reveal, at: time) }
         renderer?.render()
+    }
+
+    /// One frame of the un-fold: progress and δ ease back to 0 along the same
+    /// curves the close used, so the picture flattens and clears in reverse.
+    /// The overlay itself dissolves over the last stretch, because at δ = 0
+    /// the Full renderer still shows a half-resolution copy of the screen
+    /// and cutting from that to the real thing would flicker.
+    private func advanceReveal(_ reveal: (from: EffectParameters, start: TimeInterval), at time: TimeInterval) {
+        let t = min(1, (time - reveal.start) / Self.revealDuration)
+        let remaining = 1 - t * t * (3 - 2 * t)
+        renderer?.update(EffectParameters(progress: reveal.from.progress * remaining,
+                                          delta: reveal.from.delta * remaining,
+                                          intensity: preferences.intensity, maxDarkness: preferences.maxDarkness))
+        overlay?.alphaValue = min(1, (1 - t) / 0.4)
+        frameCount += 1
+        if t >= 1 {
+            #if DEBUG
+            NSLog("un-fold done at frame %d, %.0f ms", frameCount, (time - reveal.start) * 1000)
+            #endif
+            hide()
+        }
     }
 
     private func startDisplayLink() {

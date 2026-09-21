@@ -73,6 +73,13 @@ The version must be `MAJOR.MINOR.PATCH` and not lower than the current one
 (Sparkle would never offer a lower one). If anything fails after the
 version was written, `project.yml` is restored.
 
+The scheme builds its targets one after another (`parallelizeBuild: false`
+in `project.yml`): with parallel builds the app's CodeSign raced the test
+target copying its not-yet-signed `.xctest` into the app, and the app test
+step failed with "code object is not signed at all. In subcomponent:
+…DKBClamshellAppTests.xctest" — twice in a row, then not. If that message
+ever comes back, that race is the first suspect.
+
 ## Uploading a release
 
 Go to **admin.dangkhoabach.vn → Apps** and use "Publish new app" for the
