@@ -14,7 +14,8 @@ import Foundation
 /// the new resting angle and the screen is handed back: a lid held at 70° is
 /// a lid someone wants to use. Below `endAngle` the screen is already black
 /// and the lid is as good as closed, so the effect stays put until the
-/// screens sleep (or the lid comes back up and unfolds it).
+/// screens sleep (or the lid comes back up and unfolds it). A lid that is
+/// already closed has nothing to fold: it never starts the effect.
 public enum FoldPhase: Equatable, Sendable {
     case idle
     /// Full renderer starts its capture stream here so the first frame is
@@ -68,6 +69,7 @@ public struct FoldStateMachine: Sendable {
         switch phase {
         case .idle:
             if restAngle == nil { restAngle = angle }
+            guard restedOpen else { break }
             if angle < startAngle { phase = .active }
             else if isMoving, velocity < 0 { phase = .prewarm }
         case .prewarm:
@@ -80,14 +82,24 @@ public struct FoldStateMachine: Sendable {
         }
     }
 
+    /// Only a lid resting above `endAngle` can close. Without this a shut lid
+    /// started the effect again on the first poll after the screens slept —
+    /// a black overlay left over the lock screen when the lid was opened.
+    private var restedOpen: Bool {
+        (restAngle ?? 180) - Self.startOffset > endAngle
+    }
+
     private func released(at time: TimeInterval, angle: Double) -> Bool {
         guard angle > endAngle, let since = stillSince else { return false }
         return time - since >= Self.releaseDelay
     }
 
     /// `screensDidSleepNotification` / `willSleepNotification`: nothing to draw.
+    /// The resting angle starts over from wherever the lid is now, so a lid
+    /// still closing (or already shut) is not taken for a fresh close.
     public mutating func screensDidSleep() {
         phase = .idle
+        restAngle = nil
         stillSince = nil
     }
 

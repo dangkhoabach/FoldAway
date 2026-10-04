@@ -109,6 +109,23 @@ import Testing
         #expect(m.phase == .active)                    // …and closing further from it counts again
     }
 
+    /// The black screen after opening the lid: the screens slept with the
+    /// lid shut, and the next poll — the lid still at 0° — folded it again.
+    @Test func aClosedLidDoesNotFoldAgainAfterTheScreensSleep() {
+        var m = resting(at: 110)
+        m.update(angle: 0, velocity: -100, isMoving: true, time: 0.5);  #expect(m.phase == .active)
+        m.screensDidSleep();                                             #expect(m.phase == .idle)
+        m.update(angle: 2, velocity: -60, isMoving: true, time: 0.6);    #expect(m.phase == .idle)  // still settling
+        m.update(angle: 0, velocity: -60, isMoving: true, time: 0.7);    #expect(m.phase == .idle)
+        m.update(angle: 0, velocity: 0, isMoving: false, time: 1.0);     #expect(m.phase == .idle)
+        // Opened after waking: nothing to unfold, it just rests where it stops…
+        m.update(angle: 60, velocity: 200, isMoving: true, time: 9.0);   #expect(m.phase == .idle)
+        m.update(angle: 110, velocity: 0, isMoving: false, time: 9.5);   #expect(m.phase == .idle)
+        #expect(m.restAngle == 110)
+        // …and closing from there counts again.
+        m.update(angle: 100, velocity: -80, isMoving: true, time: 10);   #expect(m.phase == .active)
+    }
+
     @Test func unlockRevealsByTimerWhenTheLidIsAlreadyOpen() {
         var m = resting(at: 110)
         m.screenUnlocked(angle: 110);  #expect(m.phase == .reveal)

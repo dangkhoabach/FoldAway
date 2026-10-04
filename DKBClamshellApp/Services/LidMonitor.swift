@@ -30,6 +30,9 @@ final class LidMonitor {
     /// un-fold starts from.
     private var lastParams: EffectParameters?
     private var reveal: (from: EffectParameters, start: TimeInterval)?
+    /// Nothing is drawn over the Lock Screen (plan D11): the overlay sits at
+    /// the shielding level, so a stuck one hid the password field.
+    private var screenLocked = false
 
     /// The last angle the sensor (or the Preview slider) produced, for the
     /// menu bar panel.
@@ -126,7 +129,7 @@ final class LidMonitor {
                 switch result {
                 case .success(let angle) where !angle.isNaN: self.receive(LidSample(angle: angle, time: time))
                 case .success: break
-                case .failure(let error): self.status = .sensorError("\(error)"); self.pollTimer?.cancel()
+                case .failure(let error): self.status = .sensorError("\(error)"); self.pollTimer?.cancel(); self.goIdle()
                 }
             }
         }
@@ -139,8 +142,8 @@ final class LidMonitor {
         tracker.add(sample)
         lastAngle = sample.angle
         if tracker.pollInterval != pollInterval { schedulePoll(after: tracker.pollInterval) }
-        guard preferences.isEnabled else {
-            if machine.phase != .idle { goIdle() }    // switched off mid-close: don't leave the overlay up
+        guard preferences.isEnabled, !screenLocked else {
+            if machine.phase != .idle || reveal != nil { goIdle() }    // switched off mid-close: don't leave the overlay up
             return
         }
         step(at: sample.time)
@@ -163,6 +166,10 @@ final class LidMonitor {
             lastParams = params
             frameCount += 1
         }
+        // From the sensor polls too, not only the display link: the link
+        // can be missing (none is made while the built-in screen is off) or
+        // stalled, and an un-fold that never finishes never hides the overlay.
+        if let reveal { advanceReveal(reveal, at: time) }
         updateHUD(angle: angle, time: time)
     }
 
@@ -177,6 +184,7 @@ final class LidMonitor {
         let before = machine.phase
         machine.screensDidSleep()
         if before != .idle { transition(from: before, to: .idle, settled: false) }
+        else if reveal != nil { hide() }      // idle, but the un-fold is still on screen
     }
 
     // MARK: Transitions
@@ -225,7 +233,6 @@ final class LidMonitor {
     @objc private func displayLinkFired(_ link: CADisplayLink) {
         let time = CACurrentMediaTime()
         step(at: time)
-        if let reveal { advanceReveal(reveal, at: time) }
         renderer?.render()
     }
 
@@ -301,9 +308,19 @@ final class LidMonitor {
         }
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated {
-                guard let self, let screen = BuiltinScreen.screen() else { return }
+                guard let self else { return }
+                // Lid shut with an external display attached: no sleep, the
+                // built-in screen just goes away — and the overlay with it.
+                guard let screen = BuiltinScreen.screen() else { self.goIdle(); return }
                 self.overlay?.fit(to: screen)
             }
+        }
+        let distributed = DistributedNotificationCenter.default()
+        distributed.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.screenLocked = true; self?.goIdle() }
+        }
+        distributed.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.screenLocked = false }
         }
     }
 
