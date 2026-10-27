@@ -11,7 +11,7 @@ import Testing
         return d
     }
 
-    @Test func defaultsMatchThePlan() {
+    @Test func defaultValues() {
         let p = AppPreferences(defaults: freshDefaults())
         #expect(p.isEnabled)
         #expect(p.endAngle == 25)

@@ -109,7 +109,7 @@ for arch in arm64 x86_64; do
     exit 1
   }
 done
-# Exactly the entitlements the plan allows (D14) and nothing else — in
+# Exactly the entitlements the app needs and nothing else — in
 # particular no get-task-allow, which Xcode injects into Debug builds.
 ENTITLEMENTS=$(codesign -d --entitlements :- "$APP_PATH" 2>/dev/null | grep -oE '<key>[^<]+</key>' | sort | tr -d '\n')
 EXPECTED='<key>com.apple.security.app-sandbox</key><key>com.apple.security.cs.disable-library-validation</key>'

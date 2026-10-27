@@ -1,8 +1,8 @@
 import AppKit
 
-/// The full-screen layer the effect is drawn into (plan D7).
+/// The full-screen layer the effect is drawn into.
 ///
-/// It has to be an `NSPanel` with `.nonactivatingPanel`: Phase 0.6b showed a
+/// It has to be an `NSPanel` with `.nonactivatingPanel`: testing showed a
 /// plain `NSWindow` vanishes the moment another app enters full screen, at
 /// every window level and with every collection behavior. The panel is
 /// never key, never takes the mouse, is on every Space, and is excluded from

@@ -1,6 +1,6 @@
 import AppKit
 
-/// Tiny always-on-top readout of angle / phase / fps (plan D17), toggled in
+/// Tiny always-on-top readout of angle / phase / fps, toggled in
 /// Settings. Lives in the top-right of the built-in display.
 @MainActor
 final class DebugHUDWindow: NSPanel {

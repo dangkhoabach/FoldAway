@@ -8,9 +8,9 @@ public struct LidSample: Equatable, Sendable {
     public init(angle: Double, time: TimeInterval) { self.angle = angle; self.time = time }
 }
 
-/// Turns the sensor's 10 Hz samples into a smooth 60 fps angle (plan D9/D9b).
+/// Turns the sensor's 10 Hz samples into a smooth 60 fps angle.
 ///
-/// The sensor only produces a new value every 100 ms (Phase 0.2: a normal
+/// The sensor only produces a new value every 100 ms (measured: a normal
 /// close gets ~6 samples, 3–8° apart). Interpolating *between* known samples
 /// would be smooth but 100 ms late; instead the displayed angle is
 /// extrapolated from the last sample by its velocity (clamped, and never more

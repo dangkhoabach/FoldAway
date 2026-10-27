@@ -3,7 +3,7 @@ import SwiftUI
 /// `MenuBarExtra`'s label — a template `Image` (auto-tinted for light/dark
 /// menu bars) that swaps to a slashed laptop while the effect is off and to
 /// a warning triangle when the sensor is missing, so the state is visible
-/// without opening the menu (plan F3).
+/// without opening the menu.
 struct MenuBarIconView: View {
     private let services = AppServices.shared
 

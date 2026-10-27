@@ -3,7 +3,7 @@ import Testing
 @testable import DKBClamshellCore
 
 @Suite struct LidMotionTrackerTests {
-    /// The fast close recorded in Phase 0.2: ~100°/s, one sample per 100 ms.
+    /// A fast close recorded from a real sensor: ~100°/s, one sample per 100 ms.
     static let fastClose: [(Double, Double)] = [(89.68, 0.0), (85.79, 0.1), (79.31, 0.2), (69.93, 0.3), (58.87, 0.4), (46.31, 0.5), (34.19, 0.6), (23.42, 0.7)]
 
     @Test func velocityIsNegativeWhileClosingAndPollingSpeedsUp() {

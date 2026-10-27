@@ -8,7 +8,7 @@ public enum FoldDirection: String, CaseIterable, Sendable {
     case topDown, bottomUp
 }
 
-/// What the renderers draw for a given fold (plan §5.3). Blur and darkness are
+/// What the renderers draw for a given fold. Blur and darkness are
 /// *graded*: nothing at the hinge, strongest at the far edge, because that is
 /// where the picture has fallen furthest behind the glass. `progress` (0…1
 /// over the whole close) drives the final fade to black.

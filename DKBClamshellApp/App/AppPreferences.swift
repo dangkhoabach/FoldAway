@@ -2,14 +2,14 @@ import DKBClamshellCore
 import Foundation
 import Observation
 
-/// Which overlay renderer to use (plan D5). `auto` picks Full whenever the
+/// Which overlay renderer to use. `auto` picks Full whenever the
 /// Screen Recording permission is granted and Lite otherwise.
 enum RendererMode: String, CaseIterable, Identifiable {
     case auto, lite, full
     var id: Self { self }
 }
 
-/// The user-tunable settings (plan §5.4), persisted in `UserDefaults` the
+/// The user-tunable settings, persisted in `UserDefaults` the
 /// moment they change. Nothing else in the app keeps its own copy.
 @MainActor
 @Observable
@@ -17,8 +17,8 @@ final class AppPreferences {
     static let defaultEndAngle = 25
 
     var isEnabled: Bool { didSet { defaults.set(isEnabled, forKey: Keys.isEnabled) } }
-    /// Where the effect is complete. It starts from wherever the lid rested
-    /// (plan D10), so there is no start angle to configure.
+    /// Where the effect is complete. It starts from wherever the lid rested,
+    /// so there is no start angle to configure.
     var endAngle: Int { didSet { defaults.set(endAngle, forKey: Keys.endAngle) } }
     var intensity: Double { didSet { defaults.set(intensity, forKey: Keys.intensity) } }
     var maxDarkness: Double { didSet { defaults.set(maxDarkness, forKey: Keys.maxDarkness) } }

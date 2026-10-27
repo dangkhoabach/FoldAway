@@ -1,6 +1,6 @@
 import AppKit
 
-/// The MacBook's own display — the only one the lid moves (plan §4).
+/// The MacBook's own display — the only one the lid moves.
 enum BuiltinScreen {
     static func displayID() -> CGDirectDisplayID? {
         var ids = [CGDirectDisplayID](repeating: 0, count: 16)

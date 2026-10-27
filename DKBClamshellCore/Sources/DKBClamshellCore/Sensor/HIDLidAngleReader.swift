@@ -1,14 +1,14 @@
 import Foundation
 import IOKit.hid
 
-/// Reads the lid angle sensor the way Phase 0 proved works on Mac15,6:
+/// Reads the lid angle sensor the way that was proven to work on Mac15,6:
 /// match the HID Sensor page (0x20) / Orientation usage (0x8A), open the
 /// device once, and pull feature report 7 (0.01°) — falling back to report 1
 /// (whole degrees) if 7 ever fails. Matching by vendor/product id and opening
-/// through the manager returned `kIOReturnUnsupported` (plan §1 PoC-B), so
+/// through the manager returned `kIOReturnUnsupported` in testing, so
 /// this deliberately doesn't.
 ///
-/// The sensor itself only refreshes every 100 ms (plan §1 PoC-D); reading
+/// The sensor itself only refreshes every 100 ms; reading
 /// faster than that just returns the same value.
 public final class HIDLidAngleReader: LidAngleReading, @unchecked Sendable {
     private let device: IOHIDDevice

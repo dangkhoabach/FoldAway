@@ -8,7 +8,7 @@ import Testing
     }
 
     @Test func report7IsHundredths() {
-        // [7, 105, 43] → 11113 → 111.13°, the value read in Phase 0.
+        // [7, 105, 43] → 11113 → 111.13°, a value read from a real sensor.
         #expect(LidAngleReport.decode([7, 105, 43, 0, 0]) == 111.13)
     }
 

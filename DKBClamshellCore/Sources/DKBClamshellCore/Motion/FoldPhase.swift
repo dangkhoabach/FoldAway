@@ -1,6 +1,6 @@
 import Foundation
 
-/// The overlay's lifecycle (plan §5.2), driven only by angles and a few
+/// The overlay's lifecycle, driven only by angles and a few
 /// system events. Pure: no timers, no clock of its own — the app feeds it.
 ///
 /// The effect starts from wherever the lid was *resting* (iPhone Duo's
@@ -19,10 +19,10 @@ import Foundation
 public enum FoldPhase: Equatable, Sendable {
     case idle
     /// Full renderer starts its capture stream here so the first frame is
-    /// ready as soon as possible (Phase 0.3: cold start ~212 ms).
+    /// ready as soon as possible (cold start measured at ~212 ms).
     case prewarm
     case active
-    /// Timed 350 ms un-blur after unlocking with the lid already open (D11).
+    /// Timed 350 ms un-blur after unlocking with the lid already open.
     case reveal
 }
 

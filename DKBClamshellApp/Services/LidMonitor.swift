@@ -2,7 +2,7 @@ import AppKit
 import DKBClamshellCore
 import QuartzCore
 
-/// Wires the pieces together (plan §5.2): polls the sensor on a background
+/// Wires the pieces together: polls the sensor on a background
 /// timer, feeds `LidMotionTracker` and `FoldStateMachine`, and drives the
 /// chosen renderer from a display link while the overlay is visible.
 @MainActor
@@ -23,14 +23,14 @@ final class LidMonitor {
     private var pollTimer: DispatchSourceTimer?
     private var pollInterval: TimeInterval = 0
     private var displayLink: CADisplayLink?
-    /// How long the un-fold takes when the lid settles part-way (plan D11's
-    /// reveal, run from wherever the effect was instead of from 1).
+    /// How long the un-fold takes when the lid settles part-way: the
+    /// reveal, run from wherever the effect was instead of from 1.
     private static let revealDuration = 0.35
     /// The last parameters the renderer was given while active — where the
     /// un-fold starts from.
     private var lastParams: EffectParameters?
     private var reveal: (from: EffectParameters, start: TimeInterval)?
-    /// Nothing is drawn over the Lock Screen (plan D11): the overlay sits at
+    /// Nothing is drawn over the Lock Screen: the overlay sits at
     /// the shielding level, so a stuck one hid the password field.
     private var screenLocked = false
 
@@ -46,7 +46,7 @@ final class LidMonitor {
     private var fps = 0
     private var hudUpdatedAt: TimeInterval = 0
 
-    /// Settings' Preview slider (plan D17): while set, this angle replaces the
+    /// Settings' Preview slider: while set, this angle replaces the
     /// sensor so the whole pipeline — tracker, state machine, capture,
     /// renderer — runs exactly as it would for a real lid.
     var previewAngle: Double? {
@@ -218,7 +218,7 @@ final class LidMonitor {
                 hide()
             }
         case .reveal:
-            break   // Phase 4
+            break   // not wired up yet: nothing calls screenUnlocked(angle:)
         }
     }
 

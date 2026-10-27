@@ -1,8 +1,8 @@
 import AppKit
 import DKBClamshellCore
 
-/// What `LidMonitor` talks to; Lite and Full are interchangeable behind it
-/// (plan D5). All calls are on the main actor.
+/// What `LidMonitor` talks to; Lite and Full are interchangeable behind it.
+/// All calls are on the main actor.
 @MainActor
 protocol EffectRendering: AnyObject {
     /// Fills the overlay window.

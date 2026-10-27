@@ -26,7 +26,7 @@ public enum LidHardware {
     }
 
     // Model table from samhenrigold/LidAngleSensor (MIT), HardwareCompat.swift,
-    // plus Mac15,6 confirmed here in Phase 0.
+    // plus Mac15,6, confirmed on real hardware.
     static let supportedModels: [String: String] = [
         // MacBook Pro 16-inch, 2019 — the only Intel model with the sensor
         "MacBookPro16,1": "MacBook Pro (16-inch, 2019)",

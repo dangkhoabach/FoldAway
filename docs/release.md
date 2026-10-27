@@ -13,8 +13,8 @@ gitignored `Local.xcconfig`) — *not* ad-hoc like DKB Monitor / Downloader,
 because macOS keys the Screen Recording grant on the signing identity: an
 ad-hoc build gets a new identity every time, so every update would ask for
 the permission again and the Full renderer would fall back to Lite until
-it was granted. The certificate keeps the grant across releases (plan D1,
-verified in Phase 0.4). On another Mac the first launch needs System
+it was granted. The certificate keeps the grant across releases
+(verified on a real install). On another Mac the first launch needs System
 Settings › Privacy & Security › **Open Anyway**.
 
 ## One-time setup
@@ -42,7 +42,7 @@ scheduled check actually starts — the controller is lazy.
 
 ## Hardened Runtime and Sparkle
 
-Release keeps Hardened Runtime (plan D14). Its library validation only
+Release keeps Hardened Runtime. Its library validation only
 loads frameworks signed by Apple or by the app's own Team ID, and a
 self-signed certificate has no Team ID — so the embedded
 `Sparkle.framework`, although signed by the very same certificate, was
@@ -88,12 +88,12 @@ ever comes back, that race is the first suspect.
 Set on the project/target in `DKBClamshellNative.xcodeproj` (open it in Xcode to change):
 
 - `Local.xcconfig` is the base configuration of both build configurations and carries only
-  `CODE_SIGN_IDENTITY`. Plan §3.2 D1: the Screen Recording grant (TCC) is keyed on the
+  `CODE_SIGN_IDENTITY`. Why: the Screen Recording grant (TCC) is keyed on the
   signing identity — ad-hoc would re-prompt after every rebuild; the self-signed certificate
-  keeps it (verified in Phase 0.4). The build fails until the file exists, on purpose.
+  keeps it (verified on a real install). The build fails until the file exists, on purpose.
 - `CODE_SIGN_STYLE = Manual`, no team: built and installed on this Mac only, no Apple
   Developer Program, nothing that can expire.
-- `ENABLE_HARDENED_RUNTIME` is `YES` for Release only (plan D14): Xcode 16+ Debug builds link
+- `ENABLE_HARDENED_RUNTIME` is `YES` for Release only: Xcode 16+ Debug builds link
   the app through a generated `<App>.debug.dylib`, and Hardened Runtime's library validation
   rejects that dylib under a non-Apple identity — confirmed in DKB-Secret.
 - `CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO` for Release: Xcode otherwise injects
@@ -104,12 +104,12 @@ Set on the project/target in `DKBClamshellNative.xcodeproj` (open it in Xcode to
   deliberate edit that comes with re-reading Sparkle's release notes.
 - `SWIFT_EMIT_LOC_STRINGS = YES`: the compiler must emit the exact runtime keys for
   interpolated SwiftUI strings, or hand-written catalog entries never match at runtime.
-- Not sandboxed (plan D14): IOKit HID access to the lid angle sensor and ScreenCaptureKit are
+- Not sandboxed: IOKit HID access to the lid angle sensor and ScreenCaptureKit are
   simpler outside the sandbox, and the app holds nothing worth isolating; it makes no network
   calls of its own.
-- `Info.plist`: `LSUIElement = true` (menu bar only, plan D4) and
+- `Info.plist`: `LSUIElement = true` (menu bar only) and
   `NSScreenCaptureUsageDescription` (shown the first time the Full renderer starts a
-  ScreenCaptureKit stream, plan D5/F5).
+  ScreenCaptureKit stream).
 
 ## Uploading a release
 
@@ -143,6 +143,6 @@ System Settings › Privacy & Security › Screen & System Audio Recording.
 ## Limits worth remembering
 
 - No app can draw on the Lock Screen, so the opening-lid effect only runs
-  after unlock (plan D11).
+  after unlock.
 - The app never contacts the network except Sparkle's update check, and
   only when the user allowed automatic checks or asked for one.

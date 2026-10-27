@@ -10,7 +10,7 @@ struct DKBClamshellApp: App {
     }
 
     var body: some Scene {
-        // Menu bar only (plan D4): the extra is the app's face, Settings is
+        // Menu bar only: the extra is the app's face, Settings is
         // the only window.
         MenuBarExtra {
             MenuBarContentView()

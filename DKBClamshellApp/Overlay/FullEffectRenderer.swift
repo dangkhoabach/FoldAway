@@ -5,7 +5,7 @@ import DKBClamshellCore
 import Metal
 import QuartzCore
 
-/// The Duo look (plan D6): the captured picture is re-projected with
+/// The Duo look: the captured picture is re-projected with
 /// `FoldProjection` so it seems to stay where the screen was while the lid
 /// folds under it; the further a panel pixel is from the hinge — the wider
 /// the gap between the glass and the picture — the more it is blurred and

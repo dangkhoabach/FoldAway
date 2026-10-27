@@ -4,11 +4,11 @@ import Foundation
 import ScreenCaptureKit
 
 /// A half-resolution ScreenCaptureKit stream of the built-in display,
-/// excluding this app's own windows (plan D6/D8). Frames are delivered on
+/// excluding this app's own windows. Frames are delivered on
 /// SCK's queue; the newest one is kept behind a lock for the renderer to pull
 /// on the main thread.
 ///
-/// Most of a cold start (Phase 0.3: ~150–210 ms) is enumerating shareable
+/// Most of a cold start (~150–210 ms measured on a Mac15,6) is enumerating shareable
 /// content, not starting the stream, so `prepare` does that ahead of time —
 /// at launch and again after every `stop` — and `start` only has to call
 /// `startCapture` (tens of ms). `start`/`stop` are idempotent.
@@ -47,7 +47,7 @@ final class ScreenCaptureSource: NSObject, SCStreamOutput, SCStreamDelegate, @un
                 let filter = SCContentFilter(display: display, excludingApplications: me, exceptingWindows: [])
                 let config = SCStreamConfiguration()
                 // display.width/height are points → 1/2 of the Retina pixel size;
-                // the blur doesn't need more (Phase 0.7).
+                // the blur doesn't need more.
                 config.width = display.width
                 config.height = display.height
                 config.minimumFrameInterval = CMTime(value: 1, timescale: 60)

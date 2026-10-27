@@ -1,6 +1,6 @@
 import Foundation
 
-/// Decodes the lid angle sensor's HID feature reports (plan §1 PoC-B/E).
+/// Decodes the lid angle sensor's HID feature reports.
 ///
 /// Report 1 is `[1, lo, hi]` in whole degrees; report 7 is `[7, lo, hi, 0, 0]`
 /// in hundredths of a degree. Both are little-endian 16-bit values.
@@ -19,7 +19,7 @@ public enum LidAngleReport {
         }
     }
 
-    /// A fully closed lid reads 0° and then wraps to ~359.9° (Phase 0.2).
+    /// A fully closed lid reads 0° and then wraps to ~359.9°.
     /// Anything past 180° is the closed side of that wrap.
     public static func normalize(_ degrees: Double) -> Double {
         degrees > 180 ? 0 : degrees

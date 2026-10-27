@@ -1,7 +1,7 @@
 // Renders the app icon set from code: a dark rounded square with a laptop
 // glyph, so the project needs no design tool to produce
 // DKBClamshellApp/Resources/Assets.xcassets/AppIcon.appiconset.
-// Placeholder look (plan Phase 1); refine later.
+// Placeholder look; refine later.
 //
 // Run once (or whenever the look changes):
 //   swift scripts/generate-app-icon.swift

@@ -2,8 +2,8 @@ import AppKit
 import DKBClamshellCore
 
 /// No capture, no permission: a system blur layer that fades in, under a
-/// darkening gradient that is heaviest at the top and lighter at the hinge
-/// (plan §3.1 "Lite"). It cannot tilt or shrink the content.
+/// darkening gradient that is heaviest at the top and lighter at the hinge.
+/// It cannot tilt or shrink the content.
 @MainActor
 final class LiteEffectRenderer: EffectRendering {
     let view = NSView()
