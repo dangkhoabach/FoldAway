@@ -103,7 +103,7 @@ public struct FoldStateMachine: Sendable {
         stillSince = nil
     }
 
-    /// `com.apple.screenIsUnlocked` (D11).
+    /// `com.apple.screenIsUnlocked`.
     public mutating func screenUnlocked(angle: Double) {
         phase = angle < startAngle ? .active : .reveal
         stillSince = nil
