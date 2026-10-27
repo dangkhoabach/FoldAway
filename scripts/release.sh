@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds, signs, DMGs and Sparkle-signs a FoldAway release entirely on
-# this Mac (docs/release.md). Same shape as DKB Secret's release.sh (local
-# certificate, Hardened Runtime check) plus DKB Monitor's Sparkle signing.
+# this Mac (docs/release.md). Same shape as KeyCellar's release.sh (local
+# certificate, Hardened Runtime check) plus SignalBar's Sparkle signing.
 #
 # Signing uses the self-signed "DKB Clamshell Local Signing" certificate
 # named in Local.xcconfig (scripts/create-signing-cert.sh): the Screen
@@ -18,7 +18,7 @@ PROJECT="FoldAway.xcodeproj"
 APP_NAME="FoldAway"
 INFO_PLIST="FoldAwayApp/Info.plist"
 # The Keychain account generate_keys created this app's EdDSA key under.
-# Required: without --account, sign_update silently signs with DKB Monitor's
+# Required: without --account, sign_update silently signs with SignalBar's
 # default-account key, producing a signature no installed copy accepts.
 SPARKLE_ACCOUNT="dkb-clamshell"
 SPARKLE_VERSION="2.6.4"
@@ -131,7 +131,7 @@ create-dmg \
   "$APP_PATH"
 
 echo "==> Signing update with Sparkle"
-# Cached per version, verified before anything is extracted (DKB Monitor).
+# Cached per version, verified before anything is extracted (SignalBar).
 SPARKLE_TOOLS_DIR="$SPARKLE_TOOLS_DIR/$SPARKLE_VERSION"
 if [ ! -x "$SPARKLE_TOOLS_DIR/bin/sign_update" ]; then
   mkdir -p "$SPARKLE_TOOLS_DIR"

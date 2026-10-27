@@ -1,7 +1,7 @@
 # Releasing FoldAway (native, macOS)
 
 Everything runs locally on this Mac — no CI secrets, no GitHub Releases.
-Same manual-publish model as DKB Monitor / DKB Downloader / DKB Secret:
+Same manual-publish model as SignalBar / MediaCatch / KeyCellar:
 build and sign here, upload by hand to admin.dangkhoabach.vn, and Sparkle
 inside the installed app picks the new version up from
 `updates.dangkhoabach.vn/dkb-clamshell/appcast.xml`.
@@ -9,7 +9,7 @@ inside the installed app picks the new version up from
 No Apple Developer Program membership, so no Developer ID signing and no
 notarization. Builds are signed with the self-signed **"FoldAway Local
 Signing"** certificate from `scripts/create-signing-cert.sh` (named in the
-gitignored `Local.xcconfig`) — *not* ad-hoc like DKB Monitor / Downloader,
+gitignored `Local.xcconfig`) — *not* ad-hoc like SignalBar / MediaCatch,
 because macOS keys the Screen Recording grant on the signing identity: an
 ad-hoc build gets a new identity every time, so every update would ask for
 the permission again and the Full renderer would fall back to Lite until
@@ -22,15 +22,15 @@ Settings › Privacy & Security › **Open Anyway**.
 1. **Signing certificate** — `scripts/create-signing-cert.sh` (creates the
    certificate in the login Keychain and writes `Local.xcconfig`).
 2. **Sparkle EdDSA keypair** — already generated (2026-09-21) under the
-   `dkb-clamshell` Keychain account, kept separate from DKB Monitor's
-   (default `ed25519` account) and DKB Downloader's (`dkb-downloader`);
+   `dkb-clamshell` Keychain account, kept separate from SignalBar's
+   (default `ed25519` account) and MediaCatch's (`dkb-downloader`);
    `SUPublicEDKey` in `FoldAwayApp/Info.plist` is its public half. Only if it ever has
    to be regenerated:
    ```bash
    .sparkle-tools/2.6.4/bin/generate_keys --account dkb-clamshell
    ```
    `--account` is required — without it the tools fall back to the default
-   account and silently reuse DKB Monitor's key.
+   account and silently reuse SignalBar's key.
 3. **`create-dmg`** — `brew install create-dmg` (styles the installer's
    Finder window with an Applications drop link).
 
@@ -47,7 +47,7 @@ loads frameworks signed by Apple or by the app's own Team ID, and a
 self-signed certificate has no Team ID — so the embedded
 `Sparkle.framework`, although signed by the very same certificate, was
 refused at launch ("mapping process and mapped file have different Team
-IDs"). DKB Monitor / Downloader turn Hardened Runtime off for this reason;
+IDs"). SignalBar / MediaCatch turn Hardened Runtime off for this reason;
 this app instead adds the `com.apple.security.cs.disable-library-validation`
 entitlement (`FoldAwayApp/FoldAwayApp.entitlements`), which lifts only that one check. `release.sh`
 verifies the runtime flag and that exactly these two entitlements are
@@ -95,11 +95,11 @@ Set on the project/target in `FoldAway.xcodeproj` (open it in Xcode to change):
   Developer Program, nothing that can expire.
 - `ENABLE_HARDENED_RUNTIME` is `YES` for Release only: Xcode 16+ Debug builds link
   the app through a generated `<App>.debug.dylib`, and Hardened Runtime's library validation
-  rejects that dylib under a non-Apple identity — confirmed in DKB-Secret.
+  rejects that dylib under a non-Apple identity — confirmed in KeyCellar.
 - `CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO` for Release: Xcode otherwise injects
   `get-task-allow` (debugger attach) into every Manual-signed build.
-- **Sparkle is pinned to an exact version** (`2.10.0`) in the package reference, like DKB
-  Monitor / Downloader: an open range would let a routine build move the update framework to
+- **Sparkle is pinned to an exact version** (`2.10.0`) in the package reference, like
+  SignalBar / MediaCatch: an open range would let a routine build move the update framework to
   an unreviewed release. The workspace's `Package.resolved` is committed too. Bumping is a
   deliberate edit that comes with re-reading Sparkle's release notes.
 - `SWIFT_EMIT_LOC_STRINGS = YES`: the compiler must emit the exact runtime keys for

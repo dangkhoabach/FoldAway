@@ -3,7 +3,7 @@ import Sparkle
 /// Thin wrapper around Sparkle's `SPUStandardUpdaterController` — reads
 /// `SUFeedURL`/`SUPublicEDKey` straight from Info.plist, so no delegate
 /// wiring is needed for "check on launch + Check for Updates… item". Copied
-/// from DKB Monitor / DKB Downloader.
+/// from SignalBar / MediaCatch.
 ///
 /// Whether it checks on its own is the user's answer, not a build setting:
 /// Info.plist does not pin `SUEnableAutomaticChecks`, so Sparkle asks on

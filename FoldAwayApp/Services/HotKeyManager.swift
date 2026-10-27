@@ -27,7 +27,7 @@ enum HotKeyAction: String, CaseIterable, Identifiable {
 }
 
 /// A key combination: Carbon key code + Carbon modifier mask (ported from
-/// DKB Secret).
+/// KeyCellar).
 struct HotKey: Equatable, Sendable {
     var keyCode: UInt32
     var carbonModifiers: UInt32

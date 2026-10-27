@@ -18,7 +18,7 @@ struct MenuBarIconView: View {
 }
 
 /// The menu bar dropdown, a real SwiftUI panel (`.menuBarExtraStyle(.window)`)
-/// laid out like DKB Monitor's: header with the state, the live readings,
+/// laid out like SignalBar's: header with the state, the live readings,
 /// then plain full-width rows for the actions.
 struct MenuBarContentView: View {
     private let services = AppServices.shared
@@ -115,7 +115,7 @@ struct MenuBarContentView: View {
     }
 
     /// Plain full-width rows with a hover highlight — `.menuBarExtraStyle(.window)`
-    /// hosts a real view, so it gets no menu-item styling for free (DKB Monitor).
+    /// hosts a real view, so it gets no menu-item styling for free (SignalBar).
     private func menuButton(_ title: LocalizedStringKey, systemImage: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: systemImage)

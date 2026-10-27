@@ -24,7 +24,7 @@ final class OverlayWindow: NSPanel {
         // fade-to-black into a light haze.
         appearance = NSAppearance(named: .darkAqua)
         // DKB_ALLOW_CAPTURE lets a Debug build be screenshotted while tuning
-        // the effect (same convention as DKB Secret); it does not exist in Release.
+        // the effect (same convention as KeyCellar); it does not exist in Release.
         #if DEBUG
         sharingType = ProcessInfo.processInfo.environment["DKB_ALLOW_CAPTURE"] == nil ? .none : .readOnly
         #else

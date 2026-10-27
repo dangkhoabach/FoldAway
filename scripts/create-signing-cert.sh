@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Creates the self-signed code-signing certificate every local build of DKB
-# Clamshell is signed with, and points Local.xcconfig at it.
+# Creates the self-signed code-signing certificate every local build of
+# FoldAway is signed with, and points Local.xcconfig at it.
 #
 # Why: there is no Apple Developer Program for this app, so the
 # alternative is ad-hoc signing, whose identity is the code hash and therefore

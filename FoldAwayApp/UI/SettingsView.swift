@@ -2,7 +2,7 @@ import FoldAwayCore
 import SwiftUI
 
 /// One `Form` with `.formStyle(.grouped)` and a `Section` per topic, like
-/// DKB Monitor's and DKB Secret's Settings pages. Every change applies at
+/// SignalBar's and KeyCellar's Settings pages. Every change applies at
 /// once — `AppPreferences` is the only copy the app reads.
 struct SettingsView: View {
     @AppStorage(ThemePreference.key) private var themeRaw = ThemePreference.system.rawValue

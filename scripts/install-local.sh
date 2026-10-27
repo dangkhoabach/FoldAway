@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copies a built release into /Applications and launches it (DKB Secret).
+# Copies a built release into /Applications and launches it (KeyCellar).
 #   ./scripts/install-local.sh            # newest release-output/<version>
 #   ./scripts/install-local.sh 0.2.0
 set -euo pipefail

@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 /// Settings › Shortcuts row: shows the shortcut, and while recording takes
-/// the next key press (with ⌘/⌥/⌃) as the new one (ported from DKB Secret).
+/// the next key press (with ⌘/⌥/⌃) as the new one (ported from KeyCellar).
 struct HotKeyRecorderView: View {
     let title: LocalizedStringKey
     let action: HotKeyAction
