@@ -23,8 +23,8 @@ final class LidMonitor {
     private var pollTimer: DispatchSourceTimer?
     private var pollInterval: TimeInterval = 0
     private var displayLink: CADisplayLink?
-    /// How long the un-fold takes when the lid settles part-way: the
-    /// reveal, run from wherever the effect was instead of from 1.
+    /// How long the un-fold takes: from wherever the effect was when the lid
+    /// settles part-way, and from fully folded after the lid is opened.
     private static let revealDuration = 0.35
     /// The last parameters the renderer was given while active — where the
     /// un-fold starts from.
@@ -33,6 +33,9 @@ final class LidMonitor {
     /// Nothing is drawn over the Lock Screen: the overlay sits at
     /// the shielding level, so a stuck one hid the password field.
     private var screenLocked = false
+    /// The screens woke since the last lock, so the next unlock follows the
+    /// lid being opened (or the display waking), not a lock at the desk.
+    private var wokeSinceLock = false
 
     /// The last angle the sensor (or the Preview slider) produced, for the
     /// menu bar panel.
@@ -218,8 +221,31 @@ final class LidMonitor {
                 hide()
             }
         case .reveal:
-            break   // not wired up yet: nothing calls screenUnlocked(angle:)
+            ensureOverlay()
+            renderer?.prepare()
+            overlay?.alphaValue = 1
+            overlay?.orderFrontRegardless()
+            frameCount = 0
+            // From fully folded to clear, and flat: there is no fold to tilt
+            // back from, the picture only un-blurs and brightens.
+            reveal = (from: EffectParameters(progress: 1, delta: 0,
+                                             intensity: preferences.intensity, maxDarkness: preferences.maxDarkness,
+                                             direction: preferences.foldDirection),
+                      start: CACurrentMediaTime())
+            startDisplayLink()
         }
+    }
+
+    /// Opening the lid: nothing can be drawn over the Lock Screen, so the
+    /// picture reveals itself once the user is in. Only after the screens
+    /// woke, so locking and unlocking at the desk shows nothing.
+    private func revealAfterUnlock() {
+        defer { wokeSinceLock = false }
+        guard wokeSinceLock, preferences.isEnabled, preferences.revealOnOpen, previewAngle == nil,
+              let angle = lastAngle, BuiltinScreen.screen() != nil else { return }
+        let before = machine.phase
+        machine.screenUnlocked(angle: angle)
+        if machine.phase != before { transition(from: before, to: machine.phase, settled: false) }
     }
 
     private func hide() {
@@ -254,6 +280,7 @@ final class LidMonitor {
             #if DEBUG
             NSLog("un-fold done at frame %d, %.0f ms", frameCount, (time - reveal.start) * 1000)
             #endif
+            machine.revealFinished()
             hide()
         }
     }
@@ -306,6 +333,9 @@ final class LidMonitor {
                 MainActor.assumeIsolated { self?.goIdle() }
             }
         }
+        center.addObserver(forName: NSWorkspace.screensDidWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.wokeSinceLock = true }
+        }
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated {
                 guard let self else { return }
@@ -317,10 +347,10 @@ final class LidMonitor {
         }
         let distributed = DistributedNotificationCenter.default()
         distributed.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated { self?.screenLocked = true; self?.goIdle() }
+            MainActor.assumeIsolated { self?.screenLocked = true; self?.wokeSinceLock = false; self?.goIdle() }
         }
         distributed.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated { self?.screenLocked = false }
+            MainActor.assumeIsolated { self?.screenLocked = false; self?.revealAfterUnlock() }
         }
     }
 

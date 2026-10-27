@@ -135,6 +135,22 @@ import Testing
         m.revealFinished();            #expect(m.phase == .idle)
     }
 
+    /// The usual way: lid shut, the Mac slept, lid opened, Touch ID. Sleep
+    /// cleared the resting angle, so the lid is not taken for one mid-close.
+    @Test func afterASleepUnlockingAnOpenLidReveals() {
+        var m = resting(at: 110)
+        m.screensDidSleep()
+        m.screenUnlocked(angle: 110);  #expect(m.phase == .reveal)
+        #expect(m.progress(angle: 110) == 0)
+        m.revealFinished();            #expect(m.phase == .idle)
+    }
+
+    @Test func afterASleepUnlockingANearlyShutLidShowsNothing() {
+        var m = resting(at: 110)
+        m.screensDidSleep()
+        m.screenUnlocked(angle: 20);   #expect(m.phase == .idle)
+    }
+
     @Test func unlockWithTheLidHalfOpenFollowsTheSensor() {
         var m = resting(at: 110)
         m.screenUnlocked(angle: 60);   #expect(m.phase == .active)

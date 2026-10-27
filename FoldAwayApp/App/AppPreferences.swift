@@ -60,6 +60,7 @@ final class AppPreferences {
         intensity = 1
         maxDarkness = 1
         foldDirection = .topDown
+        revealOnOpen = true
         rendererMode = .auto
     }
 

@@ -69,6 +69,7 @@ struct SettingsView: View {
                     Text("Bottom up").tag(FoldDirection.bottomUp)
                 }
                 .pickerStyle(.segmented)
+                Toggle("Reveal the screen after opening the lid", isOn: $prefs.revealOnOpen)
                 Text("The effect starts from wherever the lid was resting and is complete at this angle.")
                     .font(.caption).foregroundStyle(.secondary)
                 Button("Reset to Defaults") { prefs.resetEffect() }

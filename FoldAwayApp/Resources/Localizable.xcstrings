@@ -1,6 +1,16 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "Reveal the screen after opening the lid": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiện dần màn hình sau khi mở nắp"
+          }
+        }
+      }
+    },
     "%@": {
       "shouldTranslate": false
     },

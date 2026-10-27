@@ -103,9 +103,16 @@ public struct FoldStateMachine: Sendable {
         stillSince = nil
     }
 
-    /// `com.apple.screenIsUnlocked`.
+    /// `com.apple.screenIsUnlocked`, after the screens woke. While the lid has
+    /// a resting angle, a lid below it follows the sensor and one at or above
+    /// it reveals. After a sleep there is none (`screensDidSleep` cleared it):
+    /// a lid open past `endAngle` reveals, a nearly shut one has nothing to show.
     public mutating func screenUnlocked(angle: Double) {
-        phase = angle < startAngle ? .active : .reveal
+        if restAngle == nil {
+            phase = angle > endAngle ? .reveal : .idle
+        } else {
+            phase = angle < startAngle ? .active : .reveal
+        }
         stillSince = nil
     }
 

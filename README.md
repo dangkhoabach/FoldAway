@@ -17,6 +17,8 @@ the lid anywhere and the screen comes back after a second, ready to use at that 
   right.
 - Blur and darkness are graded by distance from the hinge, and the effect is complete at the
   angle you choose (25° by default).
+- When you open the lid and unlock, the picture un-blurs and brightens back in (a switch in
+  Settings turns this off).
 - Two renderers (below), picked automatically.
 - Global shortcuts that work even while the screen is dark: **⌃⌥⌘E** turns the effect off,
   **⌃⌥⌘R** restores the default settings. Both can be re-recorded.
@@ -65,9 +67,8 @@ bundle identifier, so an installed copy keeps its settings and keeps receiving u
 
 ## Known limits
 
-- macOS doesn't let any app draw over the Lock Screen.
-- The opening direction (un-blurring after you open the lid and unlock) is not built yet:
-  the state machine models it, but the app doesn't drive it.
+- macOS doesn't let any app draw over the Lock Screen, so the opening effect plays once you
+  have unlocked, not while the Lock Screen is up.
 - Only the built-in display is affected.
 
 ## How it works
