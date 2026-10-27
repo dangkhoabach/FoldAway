@@ -1,4 +1,4 @@
-# Releasing DKB Clamshell (native, macOS)
+# Releasing FoldAway (native, macOS)
 
 Everything runs locally on this Mac — no CI secrets, no GitHub Releases.
 Same manual-publish model as DKB Monitor / DKB Downloader / DKB Secret:
@@ -7,7 +7,7 @@ inside the installed app picks the new version up from
 `updates.dangkhoabach.vn/dkb-clamshell/appcast.xml`.
 
 No Apple Developer Program membership, so no Developer ID signing and no
-notarization. Builds are signed with the self-signed **"DKB Clamshell Local
+notarization. Builds are signed with the self-signed **"FoldAway Local
 Signing"** certificate from `scripts/create-signing-cert.sh` (named in the
 gitignored `Local.xcconfig`) — *not* ad-hoc like DKB Monitor / Downloader,
 because macOS keys the Screen Recording grant on the signing identity: an
@@ -24,7 +24,7 @@ Settings › Privacy & Security › **Open Anyway**.
 2. **Sparkle EdDSA keypair** — already generated (2026-09-21) under the
    `dkb-clamshell` Keychain account, kept separate from DKB Monitor's
    (default `ed25519` account) and DKB Downloader's (`dkb-downloader`);
-   `SUPublicEDKey` in `DKBClamshellApp/Info.plist` is its public half. Only if it ever has
+   `SUPublicEDKey` in `FoldAwayApp/Info.plist` is its public half. Only if it ever has
    to be regenerated:
    ```bash
    .sparkle-tools/2.6.4/bin/generate_keys --account dkb-clamshell
@@ -49,7 +49,7 @@ self-signed certificate has no Team ID — so the embedded
 refused at launch ("mapping process and mapped file have different Team
 IDs"). DKB Monitor / Downloader turn Hardened Runtime off for this reason;
 this app instead adds the `com.apple.security.cs.disable-library-validation`
-entitlement (`DKBClamshellApp/DKBClamshellApp.entitlements`), which lifts only that one check. `release.sh`
+entitlement (`FoldAwayApp/FoldAwayApp.entitlements`), which lifts only that one check. `release.sh`
 verifies the runtime flag and that exactly these two entitlements are
 present (sandbox off, library validation off) and no `get-task-allow`.
 
@@ -61,7 +61,7 @@ present (sandbox off, library validation off) and no `get-task-allow`.
 
 Prompts for the version (Enter keeps the current one), writes it into both
 `CFBundleShortVersionString` and `CFBundleVersion` in
-`DKBClamshellApp/Info.plist`, then runs:
+`FoldAwayApp/Info.plist`, then runs:
 `swift test` (Core) → app tests → Release build with the local certificate
 (universal arm64 + x86_64, temporary DerivedData) → verify signature,
 Hardened Runtime, entitlements, architectures → DMG → Sparkle-sign under the
@@ -73,19 +73,19 @@ The version must be `MAJOR.MINOR.PATCH` and not lower than the current one
 (Sparkle would never offer a lower one). If anything fails after the
 version was written, `Info.plist` is restored.
 
-The shared scheme (`DKBClamshellNative.xcodeproj/xcshareddata/xcschemes/
-DKBClamshellApp.xcscheme`, committed) builds its targets one after another
+The shared scheme (`FoldAway.xcodeproj/xcshareddata/xcschemes/
+FoldAwayApp.xcscheme`, committed) builds its targets one after another
 (`parallelizeBuildables = "NO"`; `DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING`
 on the app target keeps Xcode's "manual order is deprecated" warning to a
 verbose-only note): with parallel builds the app's CodeSign raced the test
 target copying its not-yet-signed `.xctest` into the app, and the app test
 step failed with "code object is not signed at all. In subcomponent:
-…DKBClamshellAppTests.xctest" — twice in a row, then not. If that message
+…FoldAwayAppTests.xctest" — twice in a row, then not. If that message
 ever comes back, that race is the first suspect.
 
 ## Build settings worth knowing
 
-Set on the project/target in `DKBClamshellNative.xcodeproj` (open it in Xcode to change):
+Set on the project/target in `FoldAway.xcodeproj` (open it in Xcode to change):
 
 - `Local.xcconfig` is the base configuration of both build configurations and carries only
   `CODE_SIGN_IDENTITY`. Why: the Screen Recording grant (TCC) is keyed on the
@@ -119,8 +119,8 @@ and upload:
 
 | Form field | File |
 |---|---|
-| Installer file | `DKB-Clamshell-<version>.dmg` |
-| Sparkle signature (.sig) | `DKB-Clamshell-<version>.dmg.sig` (paste its contents) |
+| Installer file | `FoldAway-<version>.dmg` |
+| Sparkle signature (.sig) | `FoldAway-<version>.dmg.sig` (paste its contents) |
 
 Leave the Tauri-format "Updater bundle"/"Signature" fields empty. The admin
 panel writes `updates.dangkhoabach.vn/dkb-clamshell/appcast.xml`, which

@@ -1,6 +1,6 @@
 // Renders the app icon set from code: a dark rounded square with a laptop
 // glyph, so the project needs no design tool to produce
-// DKBClamshellApp/Resources/Assets.xcassets/AppIcon.appiconset.
+// FoldAwayApp/Resources/Assets.xcassets/AppIcon.appiconset.
 // Placeholder look; refine later.
 //
 // Run once (or whenever the look changes):
@@ -8,7 +8,7 @@
 import AppKit
 
 let root = URL(fileURLWithPath: CommandLine.arguments.first!).deletingLastPathComponent().deletingLastPathComponent()
-let iconset = root.appendingPathComponent("DKBClamshellApp/Resources/Assets.xcassets/AppIcon.appiconset")
+let iconset = root.appendingPathComponent("FoldAwayApp/Resources/Assets.xcassets/AppIcon.appiconset")
 try FileManager.default.createDirectory(at: iconset, withIntermediateDirectories: true)
 
 func render(size: CGFloat) -> NSImage {

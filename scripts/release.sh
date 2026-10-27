@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds, signs, DMGs and Sparkle-signs a DKB Clamshell release entirely on
+# Builds, signs, DMGs and Sparkle-signs a FoldAway release entirely on
 # this Mac (docs/release.md). Same shape as DKB Secret's release.sh (local
 # certificate, Hardened Runtime check) plus DKB Monitor's Sparkle signing.
 #
@@ -13,10 +13,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-SCHEME="DKBClamshellApp"
-PROJECT="DKBClamshellNative.xcodeproj"
-APP_NAME="DKB Clamshell"
-INFO_PLIST="DKBClamshellApp/Info.plist"
+SCHEME="FoldAwayApp"
+PROJECT="FoldAway.xcodeproj"
+APP_NAME="FoldAway"
+INFO_PLIST="FoldAwayApp/Info.plist"
 # The Keychain account generate_keys created this app's EdDSA key under.
 # Required: without --account, sign_update silently signs with DKB Monitor's
 # default-account key, producing a signature no installed copy accepts.
@@ -32,10 +32,10 @@ IDENTITY=$(sed -nE 's/^CODE_SIGN_IDENTITY *= *(.*)$/\1/p' Local.xcconfig)
 [ "$IDENTITY" != "-" ] || { echo "Error: Local.xcconfig is ad-hoc. A release must use the local certificate (scripts/create-signing-cert.sh)." >&2; exit 1; }
 command -v create-dmg >/dev/null || { echo "Error: create-dmg not found. Run: brew install create-dmg" >&2; exit 1; }
 
-echo "==> Testing DKBClamshellCore"
-(cd DKBClamshellCore && swift test)
+echo "==> Testing FoldAwayCore"
+(cd FoldAwayCore && swift test)
 
-echo "==> Testing DKBClamshellApp"
+echo "==> Testing FoldAwayApp"
 xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -destination "platform=macOS" -quiet
 
 # Info.plist is the source of truth for the version. Both fields get the
@@ -117,7 +117,7 @@ EXPECTED='<key>com.apple.security.app-sandbox</key><key>com.apple.security.cs.di
 echo "    entitlements OK, hardened runtime OK, architectures: $ARCHS_BUILT"
 
 echo "==> Creating DMG"
-DMG_PATH="$OUT_DIR/DKB-Clamshell-$VERSION.dmg"
+DMG_PATH="$OUT_DIR/FoldAway-$VERSION.dmg"
 rm -f "$DMG_PATH"
 create-dmg \
   --volname "$APP_NAME" \

@@ -1,4 +1,4 @@
-# DKB Clamshell
+# FoldAway
 
 A menu bar app that gives a MacBook's built-in display an iPhone Duo-style fold: as you lower
 the lid, the picture stays anchored in space while the panel folds under it, blurs from the
@@ -60,6 +60,9 @@ Updates then arrive through **Check for Updates…** in the menu bar
 ([Sparkle](https://sparkle-project.org/), signed with EdDSA). The app checks
 `updates.dangkhoabach.vn` once a day if you allow it and makes no other network calls.
 
+FoldAway was called DKB Clamshell up to version 1.0.3. It is the same app with the same
+bundle identifier, so an installed copy keeps its settings and keeps receiving updates.
+
 ## Known limits
 
 - macOS doesn't let any app draw over the Lock Screen.
@@ -69,7 +72,7 @@ Updates then arrive through **Check for Updates…** in the menu bar
 
 ## How it works
 
-- **`DKBClamshellCore`** (Swift package, no dependencies, tested headless):
+- **`FoldAwayCore`** (Swift package, no dependencies, tested headless):
   - `HIDLidAngleReader` reads the sensor as a HID feature report (Sensor page 0x20,
     Orientation usage 0x8A), in hundredths of a degree. The sensor refreshes every 100 ms.
   - `LidMotionTracker` turns those 10 Hz samples into a smooth 60 fps angle: it extrapolates
@@ -79,7 +82,7 @@ Updates then arrive through **Check for Updates…** in the menu bar
     wherever the lid was resting, and a lid that stops part-way becomes the new resting angle.
   - `FoldProjection` and `EffectParameters` turn an angle into what the renderers draw: a
     planar homography with the hinge line fixed, plus graded blur and darkness.
-- **`DKBClamshellApp`** (SwiftUI and AppKit): a non-activating full-screen panel on the
+- **`FoldAwayApp`** (SwiftUI and AppKit): a non-activating full-screen panel on the
   built-in display, a half-resolution ScreenCaptureKit stream that runs only while the lid is
   moving, Core Image filters drawn into a `CAMetalLayer` from a display link, Carbon global
   hot keys, Sparkle.
@@ -90,7 +93,7 @@ Requirements: Xcode 26 or later.
 
 ```zsh
 ./scripts/create-signing-cert.sh   # once: a self-signed identity, written to Local.xcconfig
-open DKBClamshellNative.xcodeproj
+open FoldAway.xcodeproj
 ```
 
 `Local.xcconfig` (gitignored, only `CODE_SIGN_IDENTITY`) is the project's base configuration,
@@ -101,8 +104,8 @@ unsigned build, `cp Local.xcconfig.example Local.xcconfig` is enough.
 Tests:
 
 ```zsh
-cd DKBClamshellCore && swift test        # 41 tests; one reads the real sensor when there is one
-xcodebuild test -project DKBClamshellNative.xcodeproj -scheme DKBClamshellApp -destination 'platform=macOS'   # 7 tests
+cd FoldAwayCore && swift test        # 41 tests; one reads the real sensor when there is one
+xcodebuild test -project FoldAway.xcodeproj -scheme FoldAwayApp -destination 'platform=macOS'   # 7 tests
 ```
 
 Releases are built, signed and published by hand: see [docs/release.md](docs/release.md).
@@ -113,7 +116,7 @@ Change these before you ship your own build, so it neither replaces itself with 
 release nor shares its settings:
 
 - `PRODUCT_BUNDLE_IDENTIFIER` in the Xcode project.
-- `SUFeedURL` and `SUPublicEDKey` in `DKBClamshellApp/Info.plist` (generate your own key with
+- `SUFeedURL` and `SUPublicEDKey` in `FoldAwayApp/Info.plist` (generate your own key with
   Sparkle's `generate_keys`).
 
 ## Contributing
@@ -128,5 +131,5 @@ The table of Mac models with a lid angle sensor started from
 
 ## License
 
-[MIT](LICENSE) for the source code. The DKB name, app icon and logo are not covered by the
-license; use your own for a fork.
+[MIT](LICENSE) for the source code. The FoldAway name, app icon and logo are not covered
+by the license; use your own for a fork.
