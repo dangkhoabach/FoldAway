@@ -105,7 +105,7 @@ unsigned build, `cp Local.xcconfig.example Local.xcconfig` is enough.
 Tests:
 
 ```zsh
-cd FoldAwayCore && swift test        # 41 tests; one reads the real sensor when there is one
+cd FoldAwayCore && swift test        # 43 tests; one reads the real sensor when there is one
 xcodebuild test -project FoldAway.xcodeproj -scheme FoldAwayApp -destination 'platform=macOS'   # 7 tests
 ```
 
