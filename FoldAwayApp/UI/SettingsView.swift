@@ -39,7 +39,7 @@ struct SettingsView: View {
             }
 
             Section("General") {
-                Toggle("Launch at Login", isOn: Binding(get: { loginItemEnabled }, set: setLoginItem))
+                Toggle("Launch at Login", isOn: Binding(get: { loginItemEnabled }, set: { setLoginItem($0) }))
                 if loginItemNeedsApproval {
                     Label("Waiting for your approval in System Settings › General › Login Items. Until then FoldAway won't start at login.",
                           systemImage: "exclamationmark.triangle.fill")
