@@ -7,6 +7,7 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         ThemePreference.apply()
+        StatusBarController.shared.start()
         AppServices.shared.monitor.start()
         AppServices.shared.hotKeys.start()
         _ = AppUpdater.shared   // starts Sparkle's scheduled check (the controller is lazy)

@@ -510,6 +510,66 @@
           }
         }
       }
+    },
+    "About FoldAway": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giới thiệu FoldAway"
+          }
+        }
+      }
+    },
+    "A fold for your MacBook's display as the lid closes.": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Màn hình MacBook gập lại theo nắp máy."
+          }
+        }
+      }
+    },
+    "Version %@": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phiên bản %@"
+          }
+        }
+      }
+    },
+    "Released %@": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phát hành %@"
+          }
+        }
+      }
+    },
+    "Website": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trang web"
+          }
+        }
+      }
+    },
+    "Quit FoldAway": {
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thoát FoldAway"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

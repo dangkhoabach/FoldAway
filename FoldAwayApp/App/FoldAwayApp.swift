@@ -10,19 +10,16 @@ struct FoldAwayApp: App {
     }
 
     var body: some Scene {
-        // Menu bar only: the extra is the app's face, Settings is
-        // the only window.
-        MenuBarExtra {
-            MenuBarContentView()
-                .environment(\.locale, appLocale.locale)
-        } label: {
-            MenuBarIconView()
-        }
-        .menuBarExtraStyle(.window)
-
+        // Menu bar only: the status item (`StatusBarController`) is the
+        // app's face, Settings is the only window.
         Settings {
             SettingsView()
                 .environment(\.locale, appLocale.locale)
+        }
+        .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About FoldAway") { AboutWindow.show() }
+            }
         }
     }
 }

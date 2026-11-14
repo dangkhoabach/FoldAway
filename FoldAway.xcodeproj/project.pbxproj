@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07BFCDFEB84AB1FF001A6783 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7261C25441AA79941A507C /* AppDelegate.swift */; };
+		5C01926DA3E968977552C738 /* AboutWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD77B6A320BBAD2CDCD163 /* AboutWindow.swift */; };
 		0A1B1535DCD9EC1FA904AD95 /* AppPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0568E0169D2AB8C1AA718D29 /* AppPreferencesTests.swift */; };
 		0D021B3C9CD61F1F34A9CED6 /* HotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBBF9D651EB36841A4DBD0A /* HotKeyManager.swift */; };
 		19708ECBA3A261977F4B7643 /* ThemePreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B9CD96CEFCD497D3148460 /* ThemePreference.swift */; };
@@ -17,7 +18,8 @@
 		2F2F7C73D965E708C6D8B6E7 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D616FAC62B18F99AC60B6022 /* Sparkle */; };
 		39970623A65E85FE6E342DF7 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D210FEEFE8915E004A71FE7D /* LoginItemManager.swift */; };
 		403DB0AA8FC63098625AEE10 /* AppLocale.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6EBC8EF137712E62CD9614F /* AppLocale.swift */; };
-		43E626565A48F19EAE6BB58B /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EC8BDD9AFCFBF4B1EDE138 /* MenuBarContentView.swift */; };
+		43E626565A48F19EAE6BB58B /* MenuBarPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9EC8BDD9AFCFBF4B1EDE138 /* MenuBarPanelView.swift */; };
+		ADB0CF6498F15BF6FD9F7EDF /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AAEB7E78272666F887469A /* StatusBarController.swift */; };
 		4C01B6BABF4DCE0899D370A5 /* LiteEffectRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233A4BFBDC5F03C155433FC5 /* LiteEffectRenderer.swift */; };
 		6243BC492B46E9084487D2AE /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 2CCABE58E05552562A733D7D /* Localizable.xcstrings */; };
 		7DCD8E7A98903E6DB8CA8AC0 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B3F8F423773B1703BBA8D8 /* AppPreferences.swift */; };
@@ -31,6 +33,7 @@
 		B9F10DCD75D2E67BA43CEB0D /* HotKeyRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85CCFF568A45661C20EBAC1 /* HotKeyRecorderView.swift */; };
 		C1B2835443AC556E22F2B4F8 /* FoldAwayCore in Frameworks */ = {isa = PBXBuildFile; productRef = 62A0870C7593010C1D96F015 /* FoldAwayCore */; };
 		C1EEF9E8973AB5649C39521D /* HotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401D6D902514914BD8731809 /* HotKeyTests.swift */; };
+		62DAD342608C108557704657 /* AboutWindowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909E2856B326496AB1712DDB /* AboutWindowTests.swift */; };
 		C8DA69FDDB7AAD15A8923854 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CF70CF6A9BBF75E03A13DE4 /* Assets.xcassets */; };
 		C95B4FB5EE513CF20C6FDD84 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE3F8218D6B1B120DFD628 /* SettingsView.swift */; };
 		CC6F415FA531F15DAF2FE081 /* WindowPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A895D4B86326AE233145FAF /* WindowPresenter.swift */; };
@@ -59,6 +62,7 @@
 		3A895D4B86326AE233145FAF /* WindowPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPresenter.swift; sourceTree = "<group>"; };
 		3C682104AF47B0E5DA8EF8E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		401D6D902514914BD8731809 /* HotKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyTests.swift; sourceTree = "<group>"; };
+		909E2856B326496AB1712DDB /* AboutWindowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowTests.swift; sourceTree = "<group>"; };
 		457517AB4D4DF7986E2B516F /* Local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig; sourceTree = "<group>"; };
 		533526FB3BB7D2E65E2E277D /* FoldAwayApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FoldAwayApp.entitlements; sourceTree = "<group>"; };
 		557BC1C330A073D66B24CB98 /* BuiltinScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltinScreen.swift; sourceTree = "<group>"; };
@@ -70,13 +74,15 @@
 		A6EBC8EF137712E62CD9614F /* AppLocale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLocale.swift; sourceTree = "<group>"; };
 		B28455F8772202C4D837EBF7 /* FoldAwayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldAwayApp.swift; sourceTree = "<group>"; };
 		B8DE955FEB2CE999C88D4C4C /* DebugHUDWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugHUDWindow.swift; sourceTree = "<group>"; };
-		B9EC8BDD9AFCFBF4B1EDE138 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
+		B9EC8BDD9AFCFBF4B1EDE138 /* MenuBarPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPanelView.swift; sourceTree = "<group>"; };
+		D1AAEB7E78272666F887469A /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		D210FEEFE8915E004A71FE7D /* LoginItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemManager.swift; sourceTree = "<group>"; };
 		D814FBC2ACF9902085DC0C5D /* FoldAwayAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoldAwayAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85CCFF568A45661C20EBAC1 /* HotKeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyRecorderView.swift; sourceTree = "<group>"; };
 		EF789C251A69267D579DE533 /* FullEffectRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullEffectRenderer.swift; sourceTree = "<group>"; };
 		F63A130C20625F2607FBE306 /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
 		FB7261C25441AA79941A507C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		55BD77B6A320BBAD2CDCD163 /* AboutWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindow.swift; sourceTree = "<group>"; };
 		FBAE3F8218D6B1B120DFD628 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -158,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				FB7261C25441AA79941A507C /* AppDelegate.swift */,
+				55BD77B6A320BBAD2CDCD163 /* AboutWindow.swift */,
 				37B3F8F423773B1703BBA8D8 /* AppPreferences.swift */,
 				F63A130C20625F2607FBE306 /* AppServices.swift */,
 				7D46A87D9BFB01230714F6D6 /* AppUpdater.swift */,
@@ -181,6 +188,7 @@
 			children = (
 				0568E0169D2AB8C1AA718D29 /* AppPreferencesTests.swift */,
 				401D6D902514914BD8731809 /* HotKeyTests.swift */,
+				909E2856B326496AB1712DDB /* AboutWindowTests.swift */,
 			);
 			path = FoldAwayAppTests;
 			sourceTree = "<group>";
@@ -204,7 +212,8 @@
 			children = (
 				A6EBC8EF137712E62CD9614F /* AppLocale.swift */,
 				D85CCFF568A45661C20EBAC1 /* HotKeyRecorderView.swift */,
-				B9EC8BDD9AFCFBF4B1EDE138 /* MenuBarContentView.swift */,
+				B9EC8BDD9AFCFBF4B1EDE138 /* MenuBarPanelView.swift */,
+				D1AAEB7E78272666F887469A /* StatusBarController.swift */,
 				FBAE3F8218D6B1B120DFD628 /* SettingsView.swift */,
 				29B9CD96CEFCD497D3148460 /* ThemePreference.swift */,
 			);
@@ -316,6 +325,7 @@
 			files = (
 				0A1B1535DCD9EC1FA904AD95 /* AppPreferencesTests.swift in Sources */,
 				C1EEF9E8973AB5649C39521D /* HotKeyTests.swift in Sources */,
+				62DAD342608C108557704657 /* AboutWindowTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07BFCDFEB84AB1FF001A6783 /* AppDelegate.swift in Sources */,
+				5C01926DA3E968977552C738 /* AboutWindow.swift in Sources */,
 				403DB0AA8FC63098625AEE10 /* AppLocale.swift in Sources */,
 				7DCD8E7A98903E6DB8CA8AC0 /* AppPreferences.swift in Sources */,
 				8E5CE2B7DEB2D1655EB6E433 /* AppServices.swift in Sources */,
@@ -338,7 +349,8 @@
 				944E71A5B762F1B8A833D564 /* LidMonitor.swift in Sources */,
 				4C01B6BABF4DCE0899D370A5 /* LiteEffectRenderer.swift in Sources */,
 				39970623A65E85FE6E342DF7 /* LoginItemManager.swift in Sources */,
-				43E626565A48F19EAE6BB58B /* MenuBarContentView.swift in Sources */,
+				43E626565A48F19EAE6BB58B /* MenuBarPanelView.swift in Sources */,
+				ADB0CF6498F15BF6FD9F7EDF /* StatusBarController.swift in Sources */,
 				289DF562C927F0EA54D58A0A /* OverlayWindow.swift in Sources */,
 				1DD9AA4619DA961916641239 /* ScreenCaptureSource.swift in Sources */,
 				C95B4FB5EE513CF20C6FDD84 /* SettingsView.swift in Sources */,
